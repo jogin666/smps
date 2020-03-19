@@ -1,0 +1,48 @@
+server:
+  port: 9004
+
+spring:
+  application:
+    name: password-service
+
+  datasource:
+    username: root
+    password: zy131456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/smps?serverTimezone=GMT%2B8
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+  mail:
+    host: smtp.qq.com
+    username: 994476529@qq.com
+    password: yblyrnhzwpetbchh
+    default-encoding: utf-8
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://smps9001.com:9001/eureka/,http://smps9002.com:9002/eureka/,http://smps9003.com:9003/eureka/
+    fetch-registry: true
+  instance:
+    instance-id: smps-password-service:9004
+    prefer-ip-address: true
+
+info:
+  service.name: spms-password-service
+  company.name: www.sspu.edu.cn.com
+  build.artifactId: smps_password_service
+  build.verson: 1.0
+  createBy: zy
+
+
+custom.mail:
+  from: 994476529@qq.com
+  title: SSPU 校园信息发布系统验证码
+  message: 您好，您的 SSPU——校园信息发布系统验证码为：
+  tail: 有效时间为 3 分钟，请您及时查收。
