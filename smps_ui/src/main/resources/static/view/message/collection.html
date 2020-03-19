@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SMPS 内容系统 - 消息列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layui/css/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">类别：</label>
+                    <div class="layui-input-inline" style="width: 150px">
+                        <select name="typeId">
+                            <option value=""></option>
+                            <option value="t00002">通知</option>
+                            <option value="t00003">新闻</option>
+                            <option value="t00004">兼职</option>
+                            <option value="t00001">失物</option>
+                            <option value="t00005">公告</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-list" data-type="del">删除</button>
+            </div>
+            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
+            <script type="text/html" id="table-content-list">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="search"><i class="layui-icon layui-icon-edit"></i>查看</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script src="/layui/layui.all.js"></script>
+<script>
+    ;!function(){
+        var $ = layui.$;
+        var form = layui.form;
+        var table = layui.table;
+        let account=$('#account', parent.document).val();
+
+        table.render({
+            elem: '#LAY-app-content-list',
+            height: 312,
+            url: 'http://127.0.0.1:8080/smps/message/list/collect/'+account, //数据接口
+            method:'get',
+            page: true, //开启分页
+            parseData:function(res){
+                return{
+                    "code": res.code,
+                    "msg":res.msg,
+                    "count": res.count, //解析数据长度
+                    "data": res.result //解析数据列表
+                }
+            },
+            cols: [[ //表头
+                {checkbox: true, LAY_CHECKED: false,width:'4%'},
+                {field: 'messId', title: 'ID', width:'4%', sort: true},
+                {field: 'messTitle', title: '标题', width:'30%'},
+                {field: 'typeStr', title: '类型', width:'25%'},
+                {field: 'userName', title: '作者', width:'10%'},
+                {field: 'collectionTimeStr', title: '收藏时间', width:'17%'},
+                {fixed: 'right', title: '操作',width: '14%', align: 'center', toolbar: '#table-content-list'} //这里的toolbar值是模板元素的选择器
+            ]],done: function () {
+                $("[data-field='messId']").css('display','none');
+            }
+
+        });
+
+        //搜索角色
+        form.on('submit(LAY-app-contlist-search)', function(data){
+            var conditions=data.field;
+            //执行重载
+            //执行重载
+            table.reload('LAY-app-content-list', {
+                where: {
+                    typeId:conditions.typeId
+                }
+            });
+        });
+
+        //事件
+        var active = {
+            del: function(){
+                var checkStatus = table.checkStatus('LAY-app-content-list')
+                    ,checkData = checkStatus.data; //得到选中的数据
+
+                if(checkData.length === 0){
+                    return layer.msg('请选择数据');
+                }
+                layer.confirm('确定将选择的信息全删除吗？', function(index) {
+                    var messIds="";
+                    for (let i=0;i<checkData.length;i++){
+                        messIds=messIds+checkData[i].messId;
+                        if(i<checkData.length-1){
+                            messIds=messIds+",";
+                        }
+                    }
+                    layer.msg(messIds);
+                    $.ajax({
+                        url : "http://127.0.0.1:8080/smps/message/list/collect/"+messIds,
+                        type : "delete",
+                        dataType : "json",
+                        success : function(backdata) {
+                            if (backdata.result!=null && backdata.result=="success"){
+                                table.reload('LAY-app-content-list');
+                                layer.msg('删除成功');
+                            }else{
+                                layer.msg("删除失败");
+                            }
+                        }, error : function(data) {
+                            layer.msg("请求失败");
+                        }
+                    });
+                });
+            },
+        }
+
+        table.on('tool(LAY-app-content-list)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+            if (layEvent === 'search') { //查看
+                window.open("http://127.0.0.1:8080/smps/message/view/"+data.messId);
+            }
+        });
+
+        $('.layui-btn.layuiadmin-btn-list').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    }();
+</script>
+</body>
+</html>

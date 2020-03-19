@@ -1,0 +1,10 @@
+spring:
+  mvc:
+    static-path-pattern: /**
+    view:
+      suffix: .html
+server:
+  port: 9008
+  servlet:
+    session:
+      timeout:720000

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SMPS 后台管理员</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="/layui/css/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">账号</label>
+            <div class="layui-input-block">
+              <input type="text" name="account" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">角色</label>
+            <div class="layui-input-block">
+              <select name="adminname">
+                <option value=""></option>
+                <option value="超级管理员">超级管理员</option>
+                <option value="管理员">管理员</option>
+                <option value="消息审核员">消息审核员</option>
+                <option value="用户">用户</option>
+              </select>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-admin" lay-submit lay-filter="LAY-user-back-search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="layui-card-body">
+        <div style="padding-bottom: 10px;">
+          <button class="layui-btn layuiadmin-btn-admin" data-type="batchdel">删除</button>
+          <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
+        </div>
+        
+        <table id="LAY-user-back-manage" lay-filter="LAY-user-back-manage"></table>
+
+        <script type="text/html" id="buttonTpl">
+          {{#  if(d.check == true){ }}
+            <button class="layui-btn layui-btn-xs">已审核</button>
+          {{#  } else { }}
+            <button class="layui-btn layui-btn-primary layui-btn-xs">未审核</button>
+          {{#  } }}
+        </script>
+
+        <script type="text/html" id="table-useradmin-admin">
+          {{#  if(d.roleName == '超级管理员'){ }}
+            <!--<a class="layui-btn layui-btn-disabled layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>-->
+            <a class="layui-btn layui-btn-disabled layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
+          {{#  } else { }}
+            <!--<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>-->
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+          {{#  } }}
+        </script>
+
+      </div>
+    </div>
+  </div>
+
+ <script src="/layui/layui.all.js"></script>
+  <script>
+
+    ;!function(){
+      var $ = layui.$;
+      var form = layui.form;
+      var table = layui.table;
+
+      table.render({
+        elem: '#LAY-user-back-manage',
+        height: 312,
+        url: 'http://127.0.0.1:8080/smps/admin/list', //数据接口
+        method:'get',
+        page: true, //开启分页
+        parseData:function(res){
+          return{
+            "code": res.code,
+            "msg":res.msg,
+            "count": res.count, //解析数据长度
+            "data": res.result //解析数据列表
+          }
+        },
+        cols: [[ //表头
+          {checkbox: true, LAY_CHECKED: false,width:'6%'},
+          {field: 'adminId', title: 'ID', width:'14%', sort: true},
+          {field: 'adminName', title: '名称', width:'10%'},
+          {field: 'phone', title: '手机号', width:'10%'},
+          {field: 'email', title: '邮箱号', width:'14%'},
+          {field: 'roleName', title: '角色', width:'10%'},
+          {field: 'state', title: '状态', width:'6%'},
+          {field: 'joinTime', title: '加入时间', width:'15%'},
+          {fixed: 'right', title: '操作',width: '15%', align: 'center', toolbar: '#table-useradmin-admin'} //这里的toolbar值是模板元素的选择器
+        ]]
+      });
+
+      //监听搜索
+      form.on('submit(LAY-user-back-search)', function(data){
+          var condition = data.field;
+        //执行重载
+         table.reload('LAY-user-back-manage', {
+          where:{
+             name: condition.adminname,
+             account:condition.account
+           }
+        });
+      });
+
+      //事件
+      var active = {
+        batchdel: function(){
+          var checkStatus = table.checkStatus('LAY-user-back-manage')
+                  ,checkData = checkStatus.data; //得到选中的数据
+
+          if(checkData.length === 0){
+            return layer.msg('请选择数据');
+          }
+
+          layer.confirm('确定删除吗？', function(index) {
+            var adminIds="";
+            for (let i=0;i<checkData.length;i++){
+              adminIds=adminIds+checkData[i].adminId;
+              if(i<checkData.length-1){
+                adminIds=adminIds+",";
+              }
+            }
+            layer.msg(adminIds);
+            $.ajax({
+              url : "http://127.0.0.1:8080/smps/admin/all;",
+              type : "delete",
+              dataType : "json",
+              data:{
+                'adminIds':adminIds
+              },
+              success : function(backdata) {
+                if (backdata.result!=null && backdata.result=="success"){
+                  layer.msg('删除成功');
+                  table.reload('LAY-user-back-manage');
+                }else{
+                  layer.msg("请求失败");
+                }
+              }, error : function(data) {
+                layer.msg("请求失败");
+              }
+            });
+          });
+        }
+        ,add: function(){
+          layer.open({
+            type: 2
+            ,title: '添加管理员'
+            ,content: 'adminform.html'
+            ,area: ['620px', '420px']
+            ,btn: ['确定', '取消']
+            ,yes: function(index, layero){
+              var iframeWindow = window['layui-layer-iframe'+ index]
+                      ,submit = layero.find('iframe').contents().find('#LAY-user-front-submit');
+
+              //监听提交
+              iframeWindow.layui.form.on('submit(LAY-user-front-submit)', function(data){
+                var admin= data.field; //获取提交的字段
+
+                if (admin.gender==undefined || admin.gender=="") {
+                  layer.msg("请选择性别")
+                }else if (admin.adminId==undefined || admin.adminId=="") {
+                    layer.msg("请选择角色")
+                }else if (admin.state==undefined || admin.state.length==0){
+                  layer.msg("请选择状态")
+                }else {
+                  let adminAccount=$('#account', parent.document).val();
+                  $.ajax({
+                    type:'post',
+                    dataType:'json',
+                    data: {
+                      account:admin.account,
+                      name:admin.name,
+                      age:admin.age,
+                      gender:admin.gender,
+                      phone:admin.phone,
+                      email:admin.email,
+                      roleId:admin.adminId,
+                      state:admin.state,
+                      adminAccount:adminAccount,
+                    },
+                    url:'http://127.0.0.1:8080/smps/admin/',
+                    success:function (data) {
+                      if (data.result!=null && data.result=="success"){
+                        layer.msg("保存成功");
+                        table.reload('LAY-user-back-manage');
+                        layer.close(index); //关闭弹层
+                      }else{
+                        layer.msg("保存失败");
+                      }
+                    },error:function () {
+                      layer.msg("请求失败");
+                    }
+                  })
+                }
+              });
+              submit.trigger('click');
+            }
+          });
+        }
+      }
+
+      table.on('tool(LAY-user-back-manage)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+        var data = obj.data; //获得当前行数据
+        var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+        var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+        if (layEvent === 'del') { //删除
+          layer.confirm('您确定要删除吗？', function (index) {
+            var adminId=data.adminId
+            $.ajax({
+              url : "http://127.0.0.1:8080/smps/admin/"+adminId,
+              type : "delete",
+              dataType : "json",
+              success : function(backdata) {
+                layer.msg("删除成功！");
+                if (backdata.result!=null && backdata.result=="success"){
+                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                }else{
+                  layer.msg("请求失败");
+                }
+              }, error : function(data) {
+                layer.msg("请求失败");
+              }
+            });
+            layer.close(index);
+            //向服务端发送删除指令
+
+          });
+        } else if (layEvent === 'edit') { //编辑
+
+          //do something
+          layer.open({
+              type: 2,
+              title: '编辑',
+              area:['50%','50%'],
+              content: 'adminedit.html', //这里content是一个普通的String
+              btn: ['确定', '取消'],
+              success: function (index, layero) {
+                  let body = layer.getChildFrame("body", index);
+                  let iframeWin = window[layero.find('iframe')[0]['name']];
+                  // iframeWin.method();
+                  body.find('.rolename').val("测试！");
+                  form.render();
+              },
+              yes: function (index, layero) {
+
+                  layer.close(index);
+              },
+              btn2: function (index, layero) {
+                  //return false 开启该代码可禁止点击该按钮关闭
+              }
+          });
+
+          //同步更新缓存对应的值
+          obj.update({
+            username: '123'
+            , title: 'xxx'
+          });
+        }
+      });
+
+      $('.layui-btn.layuiadmin-btn-admin').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+      });
+
+    }();
+
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SMPS 角色管理 iframe 框</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名称：</label>
+        <div class="layui-input-block">
+            <input type="text" name="roleName" lay-verify="required" lay-verType="tips" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色权限 ：</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="privileges1" lay-skin="primary" title="管理员管理" value="p00001" lay-verify="required" lay-verType="tips" class="layui-input">
+            <input type="checkbox" name="privileges2" lay-skin="primary" title="消息审核" value="p00002" lay-verify="required" lay-verType="tips" class="layui-input">
+            <input type="checkbox" name="privileges3" lay-skin="primary" title="角色管理" value="p00003" lay-verify="required" lay-verType="tips" class="layui-input">
+            <input type="checkbox" name="privileges4" lay-skin="primary" title="用户管理" value="p00004" lay-verify="required" lay-verType="tips" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="state" value="1" title="有效" lay-verify="required" lay-verType="tips" class="layui-input">
+            <input type="radio" name="state" value="0" title="无效" lay-verify="required" lay-verType="tips" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <button class="layui-btn" lay-submit lay-filter="LAY-user-role-submit" id="LAY-user-role-submit">提交</button>
+    </div>
+</div>
+
+<script src="/layui/layui.all.js"></script>
+<script>
+    ;!function () {
+        var $ = layui.$
+            ,form = layui.form ;
+    }
+</script>
+</body>
+</html>

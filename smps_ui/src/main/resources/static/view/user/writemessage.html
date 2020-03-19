@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SMPS 写消息</title>
+</head>
+<link rel="stylesheet" href="/layui/css/layui.css" media="all">
+<style type="text/css">
+    .center{
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform: translate(-50%, -50%);
+    }
+</style>
+<body>
+<div style="width: 800px;height: 800px;" class="center" id="app">
+    <form id="typeIdFrom">
+        <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role"
+             style="text-align:center;padding:20px 20px 0 0;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">消息类型：</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00003" title="新闻">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00002" title="通知">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00005" title="公告">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00001" title="失物">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00004" title="兼职">
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--<input type="hidden" id="account" name="account" v-model="user.account">-->
+    <div style="text-align: center"><h3>温馨提示：请勿删除文中的标识符</h3></div>
+    <div id="div1">
+        <h3><p style="text-align: center" id="fTitle">--start-- 这里写标题且标题的长度大于1 --end--</p></h3>
+        <h4><p style="text-align: center" id="sTitle"> 这里写副标题 </p></h4>
+        <p id="content">++start++ 这里写内容 ++end++</p>
+    </div>
+    <div style="text-align: center;margin-top: 20px">
+        <button class="layui-btn" id="submitBtn">提交</button>
+        <button class="layui-btn" id="cancelBtn" onclick="cancel()">返回</button>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript" src='/js/jquery.min.js'></script>
+<script type="text/javascript" src="/js/wangEditor.js"></script>
+<script type="text/javascript">
+    var E = window.wangEditor;
+    var editor = new E('#div1');
+    editor.create();
+
+
+    let btn=document.getElementById('submitBtn');
+    btn.addEventListener('click', function () {
+        let content=editor.txt.html();  // 读取 富文本内容
+        let contentText=editor.txt.text();
+        let titleLen=contentText.indexOf('--end--')-contentText.indexOf('--start--');
+        if (titleLen<=11){
+            alert("不能为空")
+            return false;
+        }
+        let contentLen=contentText.indexOf('++end++')-contentText.indexOf('++start++');
+        if (contentLen<=11){
+            alert("内容不能为空")
+            return false;
+        }
+        let obj = document.getElementsByName("typeId");
+        let typeId="";
+        for(let k in obj){
+            if(obj[k].checked){
+                if (typeId.length>0){
+                    typeId=typeId+",";
+                }
+                typeId=typeId+obj[k].value;
+            }
+
+        }
+        if (typeId.length==0){
+            alert("请选择消息类型")
+            return false;
+        }
+        let account=getAccount(); //获取账号
+        $.ajax({
+            type:'post',
+            dataType:'json',
+            data:{
+                content:content,
+                remark:contentText,
+                account:account,
+                typeIds: typeId
+            },
+            url:'http://127.0.0.1:8080/smps/message/',
+            success:function (backdata) {
+                if (backdata.result!=null && backdata.result=="success"){
+                    alert("提交成功，请勿重复提交");
+                } else if (backdata.msg!=null && backdata.msg!="") {
+                    alert(backdata.msg);
+                }else {
+                    alert("请求失败！");
+                }
+            },error:function () {
+                alert("请求失败")
+            }
+        })
+    }, false)
+
+    function cancel () {
+        window.history.back(-1);
+    }
+
+    function getAccount() {
+        var account="";
+        $.ajax({
+            async:false,
+            type: 'get',
+            dataType:'json',
+            url:'http://localhost:9008/UI/user/',
+            success:function (backdata) {
+                account=backdata.account;
+            },error:function () {
+            }
+        })
+        return account;
+    }
+
+</script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript">
+
+    // new Vue({
+    //
+    //     el:'#app',
+    //     data:function(){
+    //         return{
+    //             user: {
+    //                 "account":"",
+    //             }
+    //         }
+    //     },
+    //     mounted:function () {
+    //         axios.get("http://localhost:9008/UI/user/")
+    //             .then(response => (this.user=response.data))
+    //             .catch(function (reason) {
+    //                 console.log(reason);
+    //             })
+    //     },
+    // })
+</script>
+<script src="/layui/layui.all.js"></script>
+<script>
+    ;!function () {
+        var $ = layui.$
+            ,form = layui.form ;
+    }
+</script>
+</body>
+</html>

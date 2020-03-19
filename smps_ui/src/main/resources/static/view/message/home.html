@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <title>
+    </title>
+    <link rel="stylesheet" href="/haolin/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/haolin/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/haolin/css/highlight.css">
+    <link id="MainCss" rel="stylesheet" href="/css/bundle-codinglife.min.css" />
+<body ontouchstart="">
+<header class="intro-header" style="background-image: url('/images/login/bg.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
+                <div class="site-heading">
+                    SSPU 校园信息发布, 欢迎您!
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <img src="/images/login/sspu.png"/>
+        </div>
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/view/user/writemessage.html">发布信息</a>
+                    </li>
+                    <li>
+                        <a href="/view/user/userInfo.html">个人信息</a>
+                    </li>
+                    <li>
+                        <a href="/UI/user/loginOut">退出</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <!--消息内容-->
+        <div class="col-lg-8 col-lg-offset-1 col-md-8 col-md-offset-1 col-sm-12 col-xs-12 post-container ">
+            <div id="mainContent">
+                <template v-for="item in messageList">
+                    <div class="forFlow">
+                        <div class="day">
+                            <div class="dayTitle">
+                                <a v-bind:href="item.url">{{item.timeStr}}</a>
+                            </div>
+                            <div class="postTitle">
+                                <a class="postTitle2" v-bind:href="item.url">{{item.title}}</a>
+                            </div>
+                            <div class="postCon">
+                                <div class="c_b_p_desc">
+                                    {{item.remark}}.....
+                                    <a v-bind:href="item.url" class="c_b_p_desc_readmore">阅读全文</a>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                            <div class="postDesc">
+                                posted by {{item.account}} 阅读 ({{item.viewNum}}) 评论 ({{item.commentNum}})
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div><!--end: forFlow -->
+                </template>
+            </div>
+            <ul class="pager">
+                <li class="next">
+                    <a onclick="nextPage()">下一页 &rarr;</a>
+                </li>
+            </ul>
+        </div>
+
+        <!--侧边栏-->
+        <div  id="userInfo" class=" col-lg-3 col-lg-offset-0 col-md-3 col-md-offset-0 col-sm-12 col-xs-12 sidebar-container">
+            <section class="visible-md visible-lg">
+                <div class="short-about">
+                    <ul class="list-inline">
+                        <li>
+                            <a target="_blank" href="/view/user/userInfo.html">
+                                <span class="fa-stack fa-lg">
+                                   <i class="fa  fa-stack-1x fa-inverse">
+                                        <image v-bind:src="user.image" style="width:100px;height:100px"></image>
+                                    </i>
+                                    <i class="fa fa-circle fa-stack-2x">{{user.name}}</i>
+                                    <i class="fa fa-circle fa-stack-2x">上海第二工业大学</i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <p style="background: grey;height: 1px"/>
+                <div style="display: flex;justify-content: space-between;">
+                    <div><h5>类型搜索：</h5></div>
+                    <div>
+                        <select name="typeId" id="typeId" v-on:change="getMessageByCondition" style="width: 130px;">
+                            <option value=""></option>
+                            <option value="t00002"><font color="black">通知</font></option>
+                            <option value="t00003"><font color="black">新闻</font></option>
+                            <option value="t00004"><font color="black">兼职</font></option>
+                            <option value="t00001"><font color="black">失物</font></option>
+                            <option value="t00005"><font color="black">公告</font></option>
+                        </select>
+                    </div>
+                </div>
+                <p style="background: grey;height: 1px"/>
+                <div style="display: flex;justify-content: space-between;">
+                    <div><h5>标题搜索：</h5></div>
+                    <div>
+                        <input type="search" id="title" v-on:blur="getMessageByCondition" style="width: 130px">
+                    </div>
+                </div>
+                <p style="background: grey;height: 1px"/>
+
+            </section>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p class="copyright text-muted">
+                    CopyRight   ©2020   上海第二工业大学 <br />
+                    <span id="poweredby">Powered by zy</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script type="text/javascript">
+
+    var page=1;
+
+    let obj=new Vue({
+        el:"#mainContent",
+        data:function () {
+            return{
+                messageList:null
+            }
+        },
+        mounted:function () {
+            axios.get("http://127.0.0.1:8080/smps/message/list/home")
+                .then(response => (this.messageList=response.data))
+                .catch(function (reason) {
+                    console.log(reason);
+                })
+        }
+    })
+
+    function nextPage() {
+        page=page+1;
+        axios.get("http://127.0.0.1:8080/smps/message/list/home?page="+page)
+            .then(response => (obj.messageList=response.data))
+            .catch(function (reason) {
+                console.log(reason);
+            })
+    }
+
+    new Vue({
+        el:'#userInfo',
+        data:function(){
+            return{
+                user: {
+                    img:"",
+                    name:""
+                }
+            }
+        },
+        methods: {
+            getMessageByCondition:function() {
+                let typeId=document.getElementById("typeId").value;
+                let title=document.getElementById("title").value;
+                page=0; //重新置0
+                axios.get("http://127.0.0.1:8080/smps/message/list/home",{
+                    params:{
+                        typeId:typeId,
+                        title:title
+                    }
+                })
+                    .then(response => (obj.messageList=response.data))
+                    .catch(function (error) {
+                        alert(error);
+                    })
+            }
+        },
+        mounted:function () {
+            axios.get("http://localhost:9008/UI/user/")
+                .then(response => (this.user=response.data))
+                .catch(function (reason) {
+                    console.log(reason);
+                })
+        },
+    })
+</script>
+</html>
+

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>SSPU 校园信息发布后台管理系统</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  
+  <link rel="stylesheet" href="/layui/css/layui.css"  media="all">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin" id="app">
+  <div class="layui-header">
+    <div class="layui-logo" style="width: 250px;float: left ">SSPU校园信息发布后台系统</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item"><a href="#"></a></li>
+      <li class="layui-nav-item"><a href="/view/admin/sys_home.html" target="container">首页</a></li>
+      <li class="layui-nav-item"><a href="/view/admin/home.html">校园消息</a></li>
+      <li class="layui-nav-item"><a href="">其他</a></li>
+
+    </ul>
+
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="/view/user/userInfo.html" target="_blank">
+          <img v-bind:src="user.image" class="layui-nav-img">
+          {{user.name}}
+        </a>
+        <input type="hidden" id="account" v-model="user.account">
+      </li>
+      <li class="layui-nav-item"><a href="/UI/user/loginOut">退出</a></li>
+    </ul>
+
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="/view/admin/mess.html" target="container">消息审核</a>
+        </li>
+        <li class="layui-nav-item">
+          <a href="/view/admin/user.html" target="container">用户管理</a>
+        </li>
+        <li class="layui-nav-item">
+          <a href="/view/admin/admin.html" target="container">管理员管理</a>
+        </li>
+        <li class="layui-nav-item">
+          <a href="/view/admin/role.html" target="container">角色管理</a>
+        </li>
+        <!--<li class="layui-nav-item">-->
+            <!--<a href="/view/admin/userInfo.html" target="container">基本资料</a>-->
+        <!--</li>-->
+        <!--<li class="layui-nav-item">-->
+          <!--<a href="/view/admin/password.html" target="container">修改密码</a>-->
+        <!--</li>-->
+      </ul>
+    </div>
+  </div>
+  
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <iframe width="100%" height="100%" src="/view/admin/sys_home.html" frameborder="0" name="container"></iframe>
+  </div>
+
+  <div class="layui-footer" style="text-align: center">
+    <!-- 底部固定区域 -->
+    <p>CopyRight&nbsp;&nbsp;&nbsp;©2020&nbsp;&nbsp;&nbsp;上海第二工业大学</a></p>
+    <p>Create By zy</a></p>
+  </div>
+    <script type="text/javascript" src="/layui/layui.all.js"></script>
+    <script>
+        ;!function () {
+            let element=layer.element;
+        }();
+    </script>
+</div>
+<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script>
+    new Vue({
+
+        el:'#app',
+        data:function(){
+            return{
+                user: {
+                    "image":'',
+                    "name":'',
+                    "account":''
+                }
+            }
+        },
+        mounted:function () {
+            axios.get("http://localhost:9008/UI/user/")
+                .then(response => (this.user=response.data))
+                .catch(function (reason) {
+                    console.log(reason);
+                })
+        },
+    })
+</script>
+</body>
+</html>
