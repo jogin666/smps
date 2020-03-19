@@ -1,0 +1,37 @@
+server:
+  port: 9007
+
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    username: root
+    password: zy131456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/smps?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://smps9001.com:9001/eureka/,http://smps9002.com:9002/eureka/,http://smps9003.com:9003/eureka/
+  instance:
+    instance-id: smps-user-service:9007
+    prefer-ip-address: true
+
+info:
+  service.name: spms-user-service
+  company.name: www.sspu.edu.cn.com
+  build.artifactId: smps_user_service
+  build.verson: 1.0
+  createBy: zy
+
