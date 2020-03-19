@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.smps_admin_service.mapper.AdminMapper">
+    <cache/>
+
+    <select id="findAll" resultMap="admin_role">
+        select u.*,ur.create_time,r.* from user u join u_r ur on u.u_id = ur.u_id join role r on ur.r_id = r.r_id where u.is_admin=1
+    </select>
+
+    <select id="findAdminByCondition" resultMap="admin_role" parameterType="PageParam">
+        select u.*,ur.create_time,r.* from user u join u_r ur on u.u_id = ur.u_id join role r on ur.r_id = r.r_id
+        <where>
+            <if test="account!=null and account!=''">
+                and u.account=#{account}
+            </if>
+            <if test="name!=null and name!=''">
+                and r.name=#{name}
+            </if>
+        </where>
+        and is_admin=1
+    </select>
+
+    <select id="findAdminById" resultMap="admin_role" parameterType="string">
+        select * from user u join u_r ur on u.u_id = ur.u_id join role r on ur.r_id = r.r_id
+        where u.account=#{account} and is_admin=1
+    </select>
+
+    <insert id="save" parameterType="AdminEntity">
+        <selectKey keyProperty="uId" resultType="string" order="BEFORE">
+            select REPLACE(UUID(),'-','') from dual
+        </selectKey>
+        insert into user(u_id, account, password, user_name, phone, age, gender, image, email, state, is_admin)
+        values(#{uId},#{account},#{password},#{name},#{phone},#{age},#{gender},#{image},#{email},#{state},#{isAdmin})
+    </insert>
+
+    <update id="update" parameterType="AdminEntity">
+        update user set state=#{state},is_admin=#{isAdmin}
+    </update>
+
+    <delete id="delete" parameterType="string">
+        delete from user where account=#{account} and is_admin=1
+    </delete>
+
+    <delete id="deleteAllByAccount" parameterType="list">
+        delete from user where account in
+        <foreach collection="list" open="(" separator="," close=")" item="account" index="index">
+            #{account}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAdminAndRole" parameterType="string">
+        delete from u_r where user_account=#{account}
+    </delete>
+
+    <insert id="saveAdminRole" parameterType="AdminRoleEntity">
+        insert into u_r(r_id, u_id, user_account, create_time, create_by_admin)
+        values(#{roleId},#{adminId},#{account},#{createTime},#{creator})
+    </insert>
+
+    <select id="findAllRole" resultMap="com.zy.smps_admin_service.mapper.RoleMapper.RoleMap">
+        select * from  role;
+    </select>
+
+    <resultMap id="AdminMap" type="AdminEntity">
+        <id property="uId" column="u_id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="account" column="account" javaType="String" jdbcType="VARCHAR"/>
+        <result property="password" column="password" javaType="String" jdbcType="VARCHAR"/>
+        <result property="name" column="user_name" javaType="String" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" javaType="String" jdbcType="VARCHAR"/>
+        <result property="age" column="age" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="gender" column="gender" javaType="String" jdbcType="VARCHAR"/>
+        <result property="image" column="image" javaType="String" jdbcType="VARCHAR"/>
+        <result property="email" column="email" javaType="String" jdbcType="VARCHAR"/>
+        <result property="state" column="state" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="isAdmin" column="is_admin" javaType="Integer" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="admin_role" type="AdminEntity" extends="AdminMap">
+
+        <result property="createTime" column="create_time" jdbcType="VARCHAR"/>
+
+        <association property="roleEntity" javaType="RoleEntity" fetchType="eager">
+            <id property="roleId" column="r_id" javaType="String" jdbcType="VARCHAR"/>
+            <result property="roleName" column="name" javaType="String" jdbcType="VARCHAR"/>
+            <result property="createBy" column="create_by" javaType="String" jdbcType="VARCHAR"/>
+            <result property="state" column="state" javaType="Integer" jdbcType="INTEGER"/>
+            <result property="createDate" column="create_date" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+        </association>
+    </resultMap>
+
+    <!--<resultMap id="admin_role_time" type="AdminEntity" extends="admin_role">-->
+
+        <!--<collection property="adminRoles" ofType="AdminRoleEntity" fetchType="eager">-->
+            <!--<result property="roleId" column="r_id" jdbcType="VARCHAR"/>-->
+            <!--<result property="adminId" column="u_id" jdbcType="VARCHAR"/>-->
+            <!--<result property="account" column="user_account" jdbcType="VARCHAR"/>-->
+            <!--<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>-->
+            <!--<result property="creator" column="create_by_admin" jdbcType="VARCHAR"/>-->
+        <!--</collection>-->
+    <!--</resultMap>-->
+
+</mapper>

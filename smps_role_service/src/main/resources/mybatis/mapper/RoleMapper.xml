@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.smps_admin_service.mapper.RoleMapper">
+    <cache/>
+
+    <select id="findAll" resultMap="role_privilege" parameterType="PageParam">
+       select r.*,p.* from role r join r_p rp on r.r_id = rp.r_id join privilege p on rp.p_id = p.p_id
+       <where>
+           <if test="name!=null and name!=''">
+               and r.name=#{name}
+           </if>
+       </where>
+    </select>
+
+    <select id="findRoleByCondition" parameterType="PageParam" resultMap="role_privilege">
+         select r.*,p.* from role r join r_p rp on r.r_id = rp.r_id join privilege p on rp.p_id = p.p_id where r.name=#{name}
+    </select>
+
+    <insert id="saveRole" parameterType="RoleEntity">
+        <selectKey keyProperty="roleId" resultType="String" order="BEFORE">
+            select REPLACE(UUID(),'-','') from dual
+        </selectKey>
+        insert into role(r_id, name, create_by, state, create_date)values (#{roleId},#{roleName},#{createBy},#{state},#{createDate})
+    </insert>
+
+    <delete id="deleteRole" parameterType="string">
+        delete from role where r_id=#{roleId}
+    </delete>
+
+    <update id="updateRole" parameterType="RoleEntity">
+        update role set name=#{roleName},state=#{state} where r_id=#{roleId}
+    </update>
+
+    <delete id="deleteAllByRoleIds" parameterType="list">
+        delete from role where r_id in 
+        <foreach collection="list" index="index" open="(" separator="," close=")" item="roleId">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <select id="findRoleById" parameterType="string" resultMap="role_privilege">
+        select * from role join r_p rp on role.r_id = rp.r_id join privilege p on rp.p_id = p.p_id where role.r_id=#{roleId}
+    </select>
+
+    <delete id="deleteRolePrivilege" parameterType="string">
+        delete from r_p where r_id=#{roleId}
+    </delete>
+
+    <insert id="saveRolePrivilege" parameterType="PrivilegeEntity">
+        insert into r_p(r_id, p_id) values(#{roleId},#{privilegeId})
+    </insert>
+
+    <select id="findAllPrivilege" resultMap="privilegeMap">
+        select * from privilege
+    </select>
+
+    <select id="getMaxRoleNumber" resultType="int">
+       select max(create_by) from role
+    </select>
+
+    <resultMap id="privilegeMap" type="PrivilegeEntity">
+        <id property="id" column="p_id" javaType="string"/>
+        <result property="privilegeName" column="name" javaType="string"/>
+    </resultMap>
+
+    <resultMap id="RoleMap" type="RoleEntity">
+        <id property="roleId" column="r_id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="roleName" column="name" javaType="String" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" javaType="String" jdbcType="VARCHAR"/>
+        <result property="state" column="state" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+    </resultMap>
+
+    <resultMap id="role_privilege" type="RoleEntity" extends="RoleMap">
+        <collection property="rolePrivileges" ofType="PrivilegeEntity" fetchType="eager">
+            <id property="id" column="p_id" javaType="String"/>
+            <result property="privilegeName" column="privilege_name" javaType="String"/>
+            <result property="demo" column="demo" javaType="String" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+</mapper>
