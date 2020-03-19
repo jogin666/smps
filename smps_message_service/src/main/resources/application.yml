@@ -1,0 +1,53 @@
+server:
+  port: 9005
+
+spring:
+  application:
+    name: message-service
+
+  datasource:
+    username: root
+    password: zy131456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/smps?serverTimezone=GMT%2B8
+    dbcp2:
+      min-idle: 5
+      max-idle: 10
+      max-total: 10
+      initial-size: 5
+      max-wait-millis: 120
+  mvc:
+    view:
+      suffix: .html
+
+
+mybatis:
+  type-aliases-package: com.zy.smps_message_service.entity
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/**/*.xml
+
+pagehelper:
+  auto-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countsql
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://smps9001.com:9001/eureka/,http://smps9002.com:9002/eureka/,http://smps9003.com:9003/eureka/
+    fetch-registry: true
+  instance:
+    instance-id: smps-view-service:9005
+    prefer-ip-address: true
+
+info:
+  service.name: spms-view-service
+  company.name: www.sspu.edu.cn.com
+  build.artifactId: smps_message_service
+  build.verson: 1.0
+  createBy: zy
+
+logging:
+  level:
+    com.zy.smps_message_service.mapper: DEBUG

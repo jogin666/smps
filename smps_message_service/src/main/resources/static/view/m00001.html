@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息</title>
+</head>
+<style>
+    .center{
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform: translate(-50%, -50%);
+    }
+    .button {
+        background-color: #008CBA; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+    }
+</style>
+<link rel="stylesheet" href="http://127.0.0.1:9008/layui/css/layui.css" media="all">
+<body>
+<div id="mainContent">
+    <div  style="width: 900px;height: 800px; background: white" class="center">
+        <div><div style="text-align: center;"><a>关于在疫情防控期间实行师生每日一报的通知</a></div><div></div><h5 style="text-align: center;">发布时间：2020-03-14&nbsp;&nbsp;&nbsp;&nbsp;供稿：信息化办公室 &nbsp;&nbsp;&nbsp;&nbsp;</h5><div></div></div><div><p align="justify">　　当前，新型冠状病毒感染的肺炎疫情防控形势严峻，为了做好疫情防控工作，从2020年2月3日起，每日10：00之前请每位教职工和学生主动申报自身近期状况，便于学校能够全面掌控疫情防控情况，进行有效安排，保障学师生的身体健康。</p><p align="justify">　　教职工和学生申报采用网上申报方式，通过手机扫描下方二维码或用浏览器点击链接网址，使用统一身份认证进入申报系统，点击每日一报，填写近期情况。为了方便申报，建议在微信中收藏二维码或在浏览器里收藏网址。如果在使用中有相关问题，可以在系统中填写或发送邮件至<a href="mailto:info@imail.sspu.edu.cn">info@imail.sspu.edu.cn</a>，我们将尽快答复。</p></div>
+        <div style="text-align: center;margin-top: 20px" id="btn">
+            <button class="button" id="submitBtn" @click="collect">收藏</button>
+            <button class="button" id="cancelBtn" @click="cancel">返回</button>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script type="text/javascript">
+    let vue=new Vue({
+        el:'#btn',
+        data:function () {
+            return{
+                user:{
+                    account:'',
+                    userId:'',
+                }
+            }
+        },
+        methods:{
+            cancel:function () {
+                self.location=document.referrer;
+            },
+            collect:function () {
+                axios.get("http://localhost:9008/UI/user/",)
+                    .then(function (backdata) {
+                        vue.user=backdata.data;
+                        vue.submitCollect();
+                    }).catch(function (reson) {
+                    alert("请求失败");
+                })
+            },
+            submitCollect:function () {
+                let url = window.location.href;
+                let messId=url.substring((url.lastIndexOf("/")+1));
+                alert(messId);
+                axios.post("http://127.0.0.1:8080/smps/message/collection/",
+                    {
+                        "userId":vue.user.userId,
+                        "account":vue.user.account,
+                        "messId":messId
+                    }
+                ).then(function (backdata) {
+                    let data=backdata.data;
+                    if (data.result!=null && data.result=="success"){
+                        alert("收藏成功,请勿重复提交");
+                    } else{
+                        alert("收藏失败")
+                    }
+                }).catch(function (reson) {
+                    alert("请求失败");
+                })
+            }
+        },
+        mounted:function () {
+
+        }
+    })
+</script>
+</html>

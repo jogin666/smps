@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SMPS 写消息</title>
+</head>
+<link rel="stylesheet" href="http://127.0.0.1:9008/layui/css/layui.css" media="all">
+<style type="text/css">
+    .center{
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform: translate(-50%, -50%);
+    }
+    .toolbar {
+        border: 1px solid #ccc;/*设置下拉棒*/
+    }
+    .w-e-text-container{
+        height: 700px !important;/*!important是重点，因为原div是行内样式设置的高度300px*/
+    }
+</style>
+<body>
+<div style="width: 800px;height: 100%;" class="center" id="app">
+    <div style="text-align: center"><h1>消息编辑</h1></div>
+    <hr>
+    <form id="typeIdFrom">
+        <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role"
+             style="text-align:center;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">消息类型：</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00003" title="新闻">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00002" title="通知">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00005" title="公告">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00001" title="失物">
+                    <input type="checkbox" name="typeId" lay-skin="primary" value="t00004" title="兼职">
+                </div>
+            </div>
+        </div>
+    </form>
+    <div style="text-align: center"><h3>温馨提示：请勿删除文中的标识符</h3></div>
+    <div id="div1" class="toolbar">
+        ###content###
+    </div>
+    <div style="text-align: center;margin-top: 20px">
+        <button class="layui-btn" id="submitBtn">提交</button>
+        <button class="layui-btn" id="cancelBtn" onclick="cancel()">返回</button>
+    </div>
+</div>
+
+
+<script type="text/javascript" src='http://127.0.0.1:9008/js/jquery.min.js'></script>
+<script type="text/javascript" src="http://127.0.0.1:9008/js/wangEditor.js"></script>
+<script type="text/javascript">
+    let E = window.wangEditor;
+    let editor = new E('#div1');
+    editor.create();
+    var typeIdStr="";
+
+    document.getElementById('submitBtn').addEventListener('click', function () {
+        let content=editor.txt.html();  // 读取 富文本内容
+        let contentText=editor.txt.text(); //文本内容
+        if (!check(contentText)){
+            return false;
+        }
+        let url=window.location.href;
+        let mId=url.substring(url.lastIndexOf('/')+1);
+        $.ajax({
+            type:'put',
+            dataType:'json',
+            data:{
+                content:content,
+                contentText:contentText,
+                typeIds: typeIdStr
+            },
+            url:'http://127.0.0.1:8080/smps/message/'+mId,
+            success:function (backdata) {
+                if (backdata.result!=null && backdata.result=="success"){
+                    alert("提交成功，请勿重复提交");
+                } else if (backdata.msg!=null && backdata.msg!="") {
+                    alert(backdata.msg);
+                }else {
+                    alert("请求失败！");
+                }
+            },error:function () {
+                alert("请求失败")
+            }
+        })
+    }, false)
+
+    function check(contentText) {
+        let titleLen=contentText.indexOf('--end--')-contentText.indexOf('--start--');
+        if (titleLen<=11){
+            alert("不能为空")
+            return false;
+        }
+        let contentLen=contentText.indexOf('++end++')-contentText.indexOf('++start++');
+        if (contentLen<=11){
+            alert("内容不能为空")
+            return false;
+        }
+        let obj = document.getElementsByName("typeId");
+        for(let k in obj){
+            if(obj[k].checked){
+                if (typeIdStr.length>0){
+                    typeIdStr=typeIdStr+",";
+                }
+                typeIdStr=typeIdStr+obj[k].value;
+            }
+
+        }
+        if (typeIdStr.length==0){
+            alert("请选择消息类型")
+            return false;
+        }
+        return true;
+    }
+
+    function cancel () {
+        window.history.back(-1);
+    }
+</script>
+<script src="http://127.0.0.1:9008/layui/layui.all.js"></script>
+<script>
+    ;!function () {
+        var $ = layui.$
+            ,form = layui.form ;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.smps_message_service.mapper.MessageMapper">
+    <!--<cache/>-->
+
+    <select id="findNotPublishMess" resultMap="message_type" parameterType="PageParam">
+     select m.*,u.user_name,t.* from message m
+          join user u on m.account = u.account
+          join message_type mt on m.m_id = mt.m_id
+          join type t on mt.t_id = t.t_id
+          where m.mess_state=0
+          <if test="title!=null and title!=''">
+              and m.title like concat('%',${title},'%')
+          </if>
+          order by m.create_time desc
+    </select>
+
+    <select id="findNotPublishMessByType"  parameterType="PageParam" resultMap="message_type">
+        select mes.*,u.user_name,t3.* from message mes join (
+          select m.m_id from
+             (select type.t_id from type where type.type=#{typeName}) t
+                join message_type mt on t.t_id=mt.t_id
+                join message m on mt.m_id = m.m_id
+                join type t2 on mt.t_id = t2.t_id
+             ) p on p.m_id=mes.m_id
+          join message_type mt2 on mes.m_id = mt2.m_id
+          join type t3 on mt2.t_id = t3.t_id
+          join user u on mes.account = u.account
+        where mes.mess_state=0
+        <if test="title!=null and title!=''">
+            and mes.title like concat('%',#{title},'%')
+        </if>
+        order by mes.create_time desc
+    </select>
+    
+    <select id="findAll" resultMap="messageMap" parameterType="PageParam">
+        select m.* from message m
+        <if test="typeId!=null and typeId!=''">
+            join message_type mt on m.m_id = mt.m_id
+            join type t on mt.t_id = t.t_id
+        </if>
+        where mess_state=1
+        <if test="typeId!=null and typeId!=''">
+            and t.t_id=#{typeId}
+        </if>
+        <if test="title!=null and title!=''">
+           and m.title like concat('%',#{title},'%')
+        </if>
+        order by authority desc ,view_num desc,publish_date desc
+    </select>
+
+    <update id="updateMessageViewNum" parameterType="map">
+        update message set view_num=#{num} where m_id=#{mId}
+    </update>
+
+    <update id="updateMessageCommentNum" parameterType="map">
+         update message set comment_num=#{num} where m_id=#{mId}
+    </update>
+
+    <select id="getViewNum" parameterType="string" resultType="int">
+         select view_num from message m where m.m_id=#{mId}
+    </select>
+
+    <select id="getCommentNum" parameterType="string" resultType="int">
+         select view_num from message m where m.m_id=#{mId}
+    </select>
+
+    <select id="findOneById" resultMap="mess_comment" parameterType="string">
+        select * from message where  m_id=#{mId}
+    </select>
+    <!--select * from message m left join comment c on c.mess_Id=m.m_id where m.m_id=#{mId};-->
+
+    <insert id="saveMessage" parameterType="MessageEntity">
+        <selectKey keyProperty="messId" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','')
+        </selectKey>
+        insert into message(m_id,account,title,content,publish_date,
+               mess_state,view_num,comment_num,create_time,authority,remark)
+        values (#{messId},#{account},#{title},#{content},#{publishDate},
+        #{messState},#{viewNum},#{commentNum},#{createTime},#{authority},#{remark})
+    </insert>
+
+    <update id="updateMessageState" parameterType="map">
+        update message m set m.mess_state=#{messState}
+         <if test="publishDate!=null and publisData!=''">
+             ,m.publish_date=#{publishDate}
+             ,m.authority=#{authority}
+         </if>
+         <if test="reason!=null and reason!=''">
+             ,m.reason=#{reason}
+         </if>
+         where m_id=#{mId}
+    </update>
+
+    <select id="findMessageByAccount" parameterType="PageParam" resultMap="message_type">
+        select m.*,t.* from message m
+            join message_type mt on m.m_id = mt.m_id
+            join type t on mt.t_id = t.t_id
+            <if test="typeName!=null and typeName!=''">
+                join (select mt2.m_id from type t1
+                      join message_type mt2 on t1.t_id = mt2.t_id
+                      where t1.type like concat('%',#{typeName},'%')
+                      ) ty
+                on ty.m_id=mt.m_id
+            </if>
+            where m.account=#{account}
+            <if test="state!=null and state!=''">
+                and m.mess_state=#{state}
+            </if>
+            order by m.create_time desc
+    </select>
+
+    <update id="updateMessage" parameterType="MessageEntity" >
+        update message set title=#{title},remark=#{remark},content=#{content},
+               create_time=#{createTime},mess_state=#{messState},reason=#{reason}
+           where m_id=#{messId}
+    </update>
+
+    <insert id="saveMessageType" parameterType="Map">
+        insert into message_type (m_id, t_id, create_time, create_by) values (#{mId},#{tId},#{createTime},#{creator});
+    </insert>
+
+    <delete id="deleteMessageType" parameterType="string">
+        delete from message_type where m_id=#{mId}
+    </delete>
+
+    <delete id="deleteMessage" parameterType="string">
+        delete from message where m_id=#{mId}
+    </delete>
+
+    <delete id="deleteCommentById" parameterType="string">
+        delete from comment where id=#{commentId}
+    </delete>
+
+    <delete id="deleteCommentBymId" parameterType="string">
+         delete from comment where mess_id=#{mId}
+    </delete>
+
+    <insert id="saveComment" parameterType="CommentEntity">
+        <selectKey keyProperty="id" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','')
+        </selectKey>
+        insert into comment(id, mess_id, comment_accout, comment_name, reply_account, reply_name, comment, create_date)
+         values(#{id},#{messId},#{commentAccount},#{commentName},#{replyAccount},#{replyName},#{comment},#{createDate})
+    </insert>
+
+    <select id="findUserCollectMess" parameterType="PageParam" resultMap="collectMessageMap">
+        select ucm.*,t.*,m.title,u.user_name from user_collect_message ucm
+                join message_type mt on ucm.m_id=mt.m_id
+                join type t on mt.t_id = t.t_id
+                join message m on mt.m_id = m.m_id
+                join user u on u.account=ucm.account
+        where ucm.account=#{account}
+        <if test="typeId!=null and typeId!=''">
+            and mt.t_id=#{typeId}
+        </if>
+        order by ucm.collect_time desc
+    </select>
+
+    <delete id="deleteUserCollection" parameterType="String">
+        delete from user_collect_message where m_id=#{messId}
+    </delete>
+
+    <select id="findAllMessType" resultMap="typeMap">
+        select * from type;
+    </select>
+
+    <insert id="collectMessage" parameterType="CollectMessageEntity">
+        insert into user_collect_message(u_id, m_id, account, collect_time)values (#{userId},#{messId},#{account},#{collectTime})
+    </insert>
+
+    <select id="findCanceledMessage" parameterType="PageParam" resultMap="message_type">
+        select m.m_id,m.title,m.reason,m.create_time,t.* from message m
+            join message_type mt on m.m_id = mt.m_id
+            join type t on mt.t_id = t.t_id
+        where m.mess_state=-1 and  m.account=#{account}
+        <if test="typeId!=null and typeId!=''">
+            and mt.t_id=#{typeId}
+        </if>
+    </select>
+
+    <resultMap id="messageMap" type="MessageEntity">
+        <id property="messId" column="m_id" javaType="string" jdbcType="VARCHAR"/>
+        <result property="userId" column="u_id" javaType="string" jdbcType="VARCHAR"/>
+        <result property="title" column="title" javaType="String" jdbcType="VARCHAR"/>
+        <result property="content" column="content" javaType="String" jdbcType="VARCHAR"/>
+        <result property="publishDate" column="publish_date" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result property="messState" column="mess_state" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="viewNum" column="view_num" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="commentNum" column="comment_num" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result property="authority" column="authority" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="account" column="account" javaType="String" jdbcType="VARCHAR"/>
+        <result property="name" column="user_name" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="reason" column="reason" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap id="mess_comment" type="MessageEntity" extends="messageMap">
+        <collection property="comments" ofType="CommentEntity" fetchType="lazy">
+            <result property="messId" column="mess_id" javaType="string" jdbcType="VARCHAR"/>
+            <result property="commentAccount" column="comment_account" javaType="string" jdbcType="VARCHAR"/>
+            <result property="commentName" column="comment_name" javaType="string" jdbcType="VARCHAR"/>
+            <result property="replyAccount" column="reply_account" javaType="string" jdbcType="VARCHAR"/>
+            <result property="replyName" column="reply_name" javaType="string" jdbcType="VARCHAR"/>
+            <result property="comment" column="comment" javaType="string" jdbcType="VARCHAR"/>
+            <result property="createDate" column="create_date" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="typeMap" type="MessageTypeEntity">
+        <id property="typeId" column="t_id" jdbcType="VARCHAR"/>
+        <result property="typeName" column="type" jdbcType="VARCHAR"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="isEffective" column="is_effective" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="message_type" type="MessageEntity" extends="messageMap">
+        <collection property="types" resultMap="typeMap" fetchType="eager"/>
+    </resultMap>
+
+    <resultMap id="collectMessageMap" type="CollectMessageEntity">
+        <result property="userId" column="u_id" jdbcType="VARCHAR"/>
+        <result property="messId" column="m_id" jdbcType="VARCHAR"/>
+        <result property="account" column="account" jdbcType="VARCHAR"/>
+        <result property="collectTime" column="collect_time" jdbcType="TIMESTAMP"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="messTitle" column="title" jdbcType="VARCHAR"/>
+        <collection property="types" resultMap="typeMap" fetchType="eager"/>
+    </resultMap>
+
+
+</mapper>

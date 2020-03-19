@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息</title>
+</head>
+<style>
+    .center{
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform: translate(-50%, -50%);
+    }
+    .button {
+        background-color: #008CBA; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+    }
+</style>
+<link rel="stylesheet" href="http://127.0.0.1:9008/layui/css/layui.css" media="all">
+<body>
+<div id="mainContent" style="background: #dedede">
+    <div  style="width: 900px;height: 800px; background: white" class="center">
+        <h3><p id="fTitle" style="text-align: center;">&nbsp;&nbsp;<a>2020届毕业生就业创业工作网络会议召开</a>&nbsp;&nbsp;&nbsp;</p></h3><h4><p id="sTitle" style="text-align: center;">发布时间：2020-03-17&nbsp; &nbsp; 供稿：招生就业处&nbsp;&nbsp;<br></p></h4><h3><p id="content"> 为积极应对疫情确保我校2020届毕业生顺利毕业、尽早就业、充分就业，3月2日，学校召开积极应对疫情全力推进2020届毕业生就业创业工作的网络会议。上海市教委学生处副处长吴能武，上海市人才服务中心主任丁峰，以及上海市浙江商会、上海建工集团、华虹集团、上海市大学生科技创业基金会等企业代表，和我校领导俞涛、莫亮金、谢华清，校院两级就业工作负责人、工作小组成员，各学部（院）党政负责人及相关职能处室负责人等参加了会议。会议由招生就业处处长经晓峰主持。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 上海市人才服务中心主任丁峰介绍了上海推进就业的相关激励政策，并表示中心愿与我校建立企业招聘信息共享机制，第一时间将企业用工需求发送给我校，促进我校毕业生实习就业需求与用人单位岗位招聘需求精准对接，并将与我校合作开展网络招聘进校园活动。上海市教委学生处副处长吴能武对我校毕业生就业工作表示肯定，并指出，市委市政府已出台一系列政策，旨在通过推进就业服务一网通办、着力组织网络招聘、推动网络课程资源开发共享、调整相应就业服务政策等举措，助力毕业生就业。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 校长俞涛在讲话中对我校2020届毕业生就业工作提出“三个更加”的要求。一是更加重视，全校上下要齐心协力推进2020届毕业生就业工作，对重点学生群体尤其是重点疫区毕业生要做好预案。二是更加创新，要创新推进就业新模式，充分利用学校区域优势，将学科建设和就业工作相结合，提供精准服务。三是更加投入，要投入更多的时间、精力、感情，敢于担责，助力毕业生顺利毕业、尽早就业、高质量就业。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 经晓峰传达了教育部和上海市相关就业工作政策和精神，介绍了《上海第二工业大学关于应对疫情做好2020届毕业生就业工作方案》，汇报了疫情防控期间学校对于毕业生和用人单位的调研情况。各学部（院）就疫情期间的就业工作进行了交流，并对目前推进就业遇到的困难及进一步举措等进行了梳理。大家表示，要通过摸清底数、分类指导、精准帮扶、转变方式、协同作战、拓展资源等多项举措，多渠道推进毕业生就业创业。</p><p>　　在企业交流环节，各企业代表围绕“加强校企合作，助推二工大毕业生稳就业”分别作了交流发言。各与会企业表示，要通过与我校签署战略合作框架协议、探讨适应我校毕业生的招聘方式、建立人才共同培养机制、优先录取符合用人标准的我校学生、全力支持我校即将举办的春季网络招聘会、加强重点行业领域对接、提供更优惠创业政策等方式，全方位助力我校毕业生就业创业。 </p><p><br></p></h3>
+        <div style="text-align: center;margin-top: 20px" id="btn">
+            <button class="button" id="submitBtn" @click="collect">收藏</button>
+            <button class="button" id="cancelBtn" @click="cancel">返回</button>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script type="text/javascript">
+    let vue=new Vue({
+        el:'#btn',
+        data:function () {
+            return{
+                user:{
+                    account:'',
+                    userId:'',
+                }
+            }
+        },
+        methods:{
+            cancel:function () {
+                self.location=document.referrer;
+            },
+            collect:function () {
+                axios.get("http://localhost:9008/UI/user/",)
+                    .then(function (backdata) {
+                        vue.user=backdata.data;
+                        vue.submitCollect();
+                    }).catch(function (reson) {
+                    alert("请求失败");
+                })
+            },
+            submitCollect:function () {
+                let url = window.location.href;
+                let messId=url.substring((url.lastIndexOf("/")+1));
+                alert(messId);
+                axios.post("http://127.0.0.1:8080/smps/message/collection/",
+                    {
+                        "userId":vue.user.userId,
+                        "account":vue.user.account,
+                        "messId":messId
+                    }
+                ).then(function (backdata) {
+                    let data=backdata.data;
+                    if (data.result!=null && data.result=="success"){
+                        alert("收藏成功,请勿重复提交");
+                    } else{
+                        alert("收藏失败")
+                    }
+                }).catch(function (reson) {
+                    alert("请求失败");
+                })
+            }
+        },
+        mounted:function () {
+
+        }
+    })
+</script>
+</html>

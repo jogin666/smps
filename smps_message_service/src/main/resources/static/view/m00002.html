@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息</title>
+</head>
+<style>
+    .center{
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform: translate(-50%, -50%);
+    }
+    .button {
+        background-color: #008CBA; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+    }
+</style>
+<link rel="stylesheet" href="http://127.0.0.1:9008/layui/css/layui.css" media="all">
+<body>
+<div id="mainContent">
+    <div  style="width: 900px;height: 800px; background: white" class="center">
+        <div style="text-align: center;"><a>借助网络“云”端 投身校园战“疫”</a>&nbsp;&nbsp;</div><p style="text-align: center;">发布时间：2020-03-14&nbsp;&nbsp;&nbsp;&nbsp;供稿：国际交流学院 &nbsp;&nbsp;&nbsp;<br></p><div></div><h5 style="text-align: center;"><p>根据学校疫情防控工作总体部署和线上教学要求，经过一段时间的精心准备，我校留学生线上教学第一课于3月11日下午正式开讲。外国留学生事务办公室（国际交流学院）组织全体教职工和校内外、境内外留学生，借助腾讯会议平台共同上好线上教学第一课，面向海内外留学生宣传介绍中国抗疫防疫情况和学校现阶段教育教学各项要求。65名境内外留学生克服时差、网络等各种困难参加了线上教学第一课，少部分因各种原因未上课的留学生也在课后与留办相关老师联系、咨询课程内容。</p><p align="center"><img alt="" src="http://sie.sspu.edu.cn/wcm.files/upload/CMSgjjlxy/202003/202003111130051.png" width="600" height="363"></p><p>&nbsp;</p><p>　　“留学生线上教学第一课”由外国留学生事务办公室副主任孙艳主持。孙艳介绍了课程相关背景和要求，强调了境外（校外）留学生禁止提前来华返沪回校的要求，嘱咐留学生和在线课程老师、学业导师、留办老师保持密切联络，确保身心健康的同时取得学习实效。</p><p>　　留学生专员郭金杰以《战“疫”中的中国力量》为题主讲“留学生线上教学第一课”，向与会留学生介绍了中国的抗疫、控疫、防疫，重点讲述了中国的制度优势是打赢战“疫”的最大法宝。他提出，来华留学生在非常时期更应培养自己的责任担当，要强化留学生知华友华、爱沪爱校的认知和信念。郭老师鼓励留学生们刻苦学习、回报社会，不负培养和期望，共筑地球村，为构建人类命运共同体而努力奋斗。</p><p>　　</p><p align="center"><img alt="" src="http://sie.sspu.edu.cn/wcm.files/upload/CMSgjjlxy/202003/202003111131006.png" width="600" height="302"></p><p>&nbsp;　　在课程答疑阶段，留学生们纷纷表达了对老师们的思念，迫切期望能尽早返回校园，现场聆听老师们的授课。</p><p align="center"><img alt="" src="http://sie.sspu.edu.cn/wcm.files/upload/CMSgjjlxy/202003/202003111131022.png" width="600" height="285"></p><p>　　参加“留学生线上教学第一课”的国际交流学院全体教职工纷纷表示，疫情防控取得积极成效，彰显出党的集中统一领导、密切联系群众、全面依法治国和集中力量办大事的制度优势，彰显了中国特色社会主义制度和国家治理体系的强大生命力和巨大优越性。国交学院也将在校党政领导下，与全校教师一起团结协作、群策群力，进一步提升线上教学质量，确保留学生的线上教育教学顺利进行。</p></h5>
+        <div style="text-align: center;margin-top: 20px" id="btn">
+            <button class="button" id="submitBtn" @click="collect">收藏</button>
+            <button class="button" id="cancelBtn" @click="cancel">返回</button>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script type="text/javascript">
+    let vue=new Vue({
+        el:'#btn',
+        data:function () {
+            return{
+                user:{
+                    account:'',
+                    userId:'',
+                }
+            }
+        },
+        methods:{
+            cancel:function () {
+                self.location=document.referrer;
+            },
+            collect:function () {
+                axios.get("http://localhost:9008/UI/user/",)
+                    .then(function (backdata) {
+                        vue.user=backdata.data;
+                        vue.submitCollect();
+                    }).catch(function (reson) {
+                    alert("请求失败");
+                })
+            },
+            submitCollect:function () {
+                let url = window.location.href;
+                let messId=url.substring((url.lastIndexOf("/")+1));
+                alert(messId);
+                axios.post("http://127.0.0.1:8080/smps/message/collection/",
+                    {
+                        "userId":vue.user.userId,
+                        "account":vue.user.account,
+                        "messId":messId
+                    }
+                ).then(function (backdata) {
+                    let data=backdata.data;
+                    if (data.result!=null && data.result=="success"){
+                        alert("收藏成功,请勿重复提交");
+                    } else{
+                        alert("收藏失败")
+                    }
+                }).catch(function (reson) {
+                    alert("请求失败");
+                })
+            }
+        },
+        mounted:function () {
+
+        }
+    })
+</script>
+</html>
