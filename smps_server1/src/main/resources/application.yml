@@ -1,0 +1,11 @@
+server:
+  port: 9001
+
+eureka:
+  instance:
+    hostname: smps9001.com
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://smps9002.com:9002/eureka/,http://smps9003.com:9003/eureka/
