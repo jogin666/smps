@@ -1,0 +1,60 @@
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: zuul-server
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://smps9001.com:9001/eureka/,http://smps9002.com:9002/eureka/,http://smps9003.com:9003/eureka/
+    instance:
+      instance-id: zuul-service:8080
+      perfer-id-address: true
+
+zuul:
+  prefix: /smps
+  ignored-service: "*"
+  routes:
+    user:
+      path: /user/**
+      service-id: user-service
+      strip-prefix: false
+    password:
+      path: /password/**
+      service-id: password-service
+      strip-prefix: false
+    role:
+      path: /role/**
+      service-id: admin-service
+      strip-prefix: false
+    admin:
+      path: /admin/**
+      service-id: admin-service
+      strip-prefix: false
+    message:
+      path: /message/**
+      service-id: message-service
+      strip-prefix: false
+
+  host:
+    connect-timeout-millis: 30000
+    socket-timeout-millis: 30000
+
+ribbon:
+  ReadTimeout: 300000
+  ConnectTimeout: 300000
+
+
+info:
+  service.name: spms-zuul-service
+  company.name: www.sspu.edu.cn.com
+  build.artifactId: smps_zuul_service
+  build.verson: 1.0
+  createBy: zy
+
+#ribbon:
+#  eureka:
+#    enable: true
