@@ -1,11 +1,13 @@
 package com.zy.smps_ui.configuration;
 
+import com.zy.smps_ui.interceptor.UrlInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebMvcConfig implements WebMvcConfigurer {
+public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -14,5 +16,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new UrlInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**","haolin/css/**","/images/**","/js/**","/layui/**","/index.html","/","/UI/user");
     }
 }

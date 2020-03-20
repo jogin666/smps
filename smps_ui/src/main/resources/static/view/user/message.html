@@ -5,7 +5,6 @@
     <title>SMPS 内容系统 - 消息列表</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <!--<meta http-equiv="refresh" content="10">-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/layui/css/admin.css" media="all">
@@ -17,14 +16,8 @@
         <div class="layui-form layui-card-header layuiadmin-card-header-auto">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">标题：</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-inline">
                     <label class="layui-form-label">类别：</label>
-                    <div class="layui-input-inline">
+                    <div class="layui-input-inline" style="width: 100px">
                         <select name="type">
                             <option value=""></option>
                             <option value="通知">通知</option>
@@ -32,6 +25,17 @@
                             <option value="兼职">兼职</option>
                             <option value="失物">失物</option>
                             <option value="公告">公告</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">状态：</label>
+                    <div class="layui-input-inline" style="width: 100px">
+                        <select name="state">
+                            <option value=""></option>
+                            <option value="1">发布</option>
+                            <option value="0">未发布</option>
+                            <option value="-1">驳回</option>
                         </select>
                     </div>
                 </div>
@@ -45,11 +49,11 @@
 
         <div class="layui-card-body">
             <div style="padding-bottom: 10px;">
-                <button class="layui-btn layuiadmin-btn-list" data-type="check">发布</button>
+                <button class="layui-btn layuiadmin-btn-list" data-type="del">删除</button>
             </div>
             <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
             <script type="text/html" id="table-content-list">
-                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>审核</a>
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="search"><i class="layui-icon layui-icon-edit"></i>查看</a>
             </script>
         </div>
     </div>
@@ -61,11 +65,11 @@
         var $ = layui.$;
         var form = layui.form;
         var table = layui.table;
-
+        let account=$('#account', parent.document).val();
         table.render({
             elem: '#LAY-app-content-list',
             height: 312,
-            url: 'http://127.0.0.1:8080/smps/message/list', //数据接口
+            url: 'http://127.0.0.1:8080/smps/message/list/'+account, //数据接口
             method:'get',
             page: true, //开启分页
             parseData:function(res){
@@ -77,15 +81,13 @@
                 }
             },
             cols: [[ //表头
-                {checkbox: true, LAY_CHECKED: false,width:'5%'},
+                {checkbox: true, LAY_CHECKED: false,width:'3%'},
                 {field: 'messId', title: 'ID', width:'0%', sort: true},
-                {field: 'title', title: '标题', width:'31%'},
-                {field: 'type', title: '类型', width:'16%'},
-                {field: 'account', title: '账号', width:'12%'},
-                {field: 'name', title: '作者', width:'10%'},
-                {field: 'state', title: '状态', width:'6%'},
-                {field: 'timeStr', title: '上传时间', width:'10%'},
-                {fixed: 'right', title: '操作',width: '10%', align: 'center', toolbar: '#table-content-list'} //这里的toolbar值是模板元素的选择器
+                {field: 'title', title: '标题', width:'33%'},
+                {field: 'type', title: '类型', width:'22%'},
+                {field: 'state', title: '状态', width:'10%'},
+                {field: 'timeStr', title: '上传时间', width:'17%'},
+                {fixed: 'right', title: '操作',width: '16%', align: 'center', toolbar: '#table-content-list'} //这里的toolbar值是模板元素的选择器
             ]],done: function () {
                 $("[data-field='messId']").css('display','none');
             }
@@ -98,7 +100,7 @@
             //执行重载
             table.reload('LAY-app-content-list', {
                 where: {
-                    title:conditions.title,
+                    state:conditions.state,
                     typeName:conditions.type
                 }
             });
@@ -106,14 +108,14 @@
 
         //事件
         var active = {
-            check: function(){
+            del: function(){
                 var checkStatus = table.checkStatus('LAY-app-content-list')
                     ,checkData = checkStatus.data; //得到选中的数据
 
                 if(checkData.length === 0){
                     return layer.msg('请选择数据');
                 }
-                layer.confirm('确定将选择的信息全部发布吗？', function(index) {
+                layer.confirm('确定将选择的信息全删除吗？', function(index) {
                     var messIds="";
                     for (let i=0;i<checkData.length;i++){
                         messIds=messIds+checkData[i].messId;
@@ -123,12 +125,9 @@
                     }
                     layer.msg(messIds);
                     $.ajax({
-                        url : "http://127.0.0.1:8080/smps/message/check/list;",
-                        type : "put",
+                        url : "http://127.0.0.1:8080/smps/message/"+messIds,
+                        type : "delete",
                         dataType : "json",
-                        data:{
-                            'messIds':messIds
-                        },
                         success : function(backdata) {
                             if (backdata.result!=null && backdata.result=="success"){
                                 table.reload('LAY-app-content-list');
@@ -147,12 +146,8 @@
         table.on('tool(LAY-app-content-list)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-
-             if (layEvent === 'edit') { //审核
-                 let account=$('#account', parent.document).val();
-                 let messId=data.messId;
-                 // window.open("http://localhost:9008/smps/message/view/check/"+messId+"?account="+account);
-                 window.open("http://localhost:9008/UI/message/view/check?messId="+messId);
+            if (layEvent === 'search') { //查看
+                window.open("http://localhost:9008/UI/template/"+data.messId);
             }
         });
 

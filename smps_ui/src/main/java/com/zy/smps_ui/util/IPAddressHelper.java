@@ -1,4 +1,4 @@
-package com.zy.smps_ui.configuration;
+package com.zy.smps_ui.util;
 
 import javax.servlet.http.HttpServletRequest;
 

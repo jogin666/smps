@@ -1,94 +1,150 @@
 package com.zy.smps_ui.controller;
 
-import com.zy.smps_ui.common.DataMap;
-import com.zy.smps_ui.configuration.IPAddressHelper;
+import com.zy.smps_ui.data.DataMap;
+import com.zy.smps_ui.util.IPAddressHelper;
 import com.zy.smps_ui.model.UserModel;
+import com.zy.smps_ui.util.RequestResultBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.Map;
-
 
 @Controller
 @RequestMapping("/UI")
 @Slf4j
 public class UIController {
 
+    private final String USER="user";
 
-    @GetMapping("/view/info")
+    @GetMapping("/home")
     public String getHomeView(){
         return "/view/message/home";
     }
 
-    @GetMapping("/view/password")
-    public String getForgetPassView(){
-        return "/view/search_password";
-    }
-
-    @GetMapping("/view/admin")
+    @GetMapping("/syshome")
     public String getAdminView(){
-        return "/view/admin/sysview";
+        return "/view/sys/sysview";
     }
 
-    @GetMapping("/user/loginOut")
-    public String getLoginView(HttpServletRequest  request){
-        request.getSession().removeAttribute("user");
-        return "/index";
-    }
-
-    @GetMapping("/view/home")
+    @GetMapping("/home/tag")
     public String getHomeView(HttpServletRequest request){
         try{
-            UserModel user = (UserModel) request.getSession().getAttribute("user");
+            UserModel user = (UserModel) request.getSession().getAttribute(USER);
             if (user.getIsAdmin()==1){
-                return "/view/admin/home";
+                return "/view/sys/home";
             }
             return "/view/message/home";
         }catch (Exception e){
-            return "/view/view/home";
+            return "/view/message/home";
         }
     }
 
-    @GetMapping("/message/view/check")
-    public String getMessageView(@RequestParam("messId")String messId,HttpServletRequest request){
-        HttpSession session = request.getSession();
-        UserModel model = (UserModel) session.getAttribute("user");
-        session.setAttribute(model.getAccount(),messId);
-        return "/view/admin/check_message";
+    @GetMapping("/sys/message")
+    public String getMessageCheckView(HttpServletRequest request){
+        String roleName = getUserModel(request).getRoleName();
+        if (roleName.contains("管理员") || roleName.contains("消息审核员")){
+            return "/view/sys/message";
+        }
+        return "view/sys/tip";
     }
 
-    @GetMapping("/message/view/edit")
-    public String getMessageEditView(@RequestParam("messId")String messId,HttpServletRequest request){
-        HttpSession session = request.getSession();
-        UserModel model = (UserModel) session.getAttribute("user");
-        if (model==null){
-            String ipAddress= IPAddressHelper.getIPAddress(request);
-            model= (UserModel) DataMap.getData("user").get(ipAddress);
+    @GetMapping("/sys/user")
+    public String getUserManagerView(HttpServletRequest request){
+        String roleName = getUserModel(request).getRoleName();
+        if (roleName.contains("管理员")){
+            return "/view/sys/user";
         }
-        session.setAttribute(model.getAccount(),messId);
-        return "/view/message/edit";
+        return "view/sys/tip";
+    }
+
+    @GetMapping("/sys/role")
+    public String getRoleView(HttpServletRequest request){
+        String roleName=getUserModel(request).getRoleName();
+        if (roleName.contains("管理员")){
+            return "/view/sys/role";
+        }
+        return "view/sys/tip";
+    }
+    
+    @GetMapping("/sys/admin")
+    public String getAdminView(HttpServletRequest request){
+        String roleName = getUserModel(request).getRoleName();
+        if (roleName.contains("超级管理员")){
+            return "/view/sys/admin";
+        }
+        return "view/sys/tip";
+    }
+
+    @GetMapping("/template/{mId}")
+    public String getTemplateView(@PathVariable("mId")String mId){
+        return "/view/template/show_mess_template";
+    }
+
+    @GetMapping("/template/check/{mId}")
+    public String getMessageView(@PathVariable("mId")String mId){
+        log.info("mId: "+mId);
+        return "/view/template/check_mess_template";
+    }
+
+    @GetMapping("/loginOut")
+    public String getLoginView(HttpServletRequest  request){
+        request.getSession().removeAttribute(USER);
+        DataMap.removeData(IPAddressHelper.getIPAddress(request));
+        return "/index";
     }
 
     @ResponseBody
-    @GetMapping("/message")
-    public Map<String,String> getMessId(HttpServletRequest request){
-        HashMap<String, String> result = new HashMap<>();
-        HttpSession session = request.getSession();
-        UserModel model= (UserModel) session.getAttribute("user");
-        String messId=(String) session.getAttribute(model.getAccount());
-        if (!StringUtils.isEmpty(messId)){
-            result.put("result","success");
-            result.put("messId",messId);
+    @PostMapping("/user")
+    public Map<String,String> login(@ModelAttribute(USER) UserModel userModel, HttpServletRequest request){
+        log.info("post: user: "+userModel);
+        request.getSession().setAttribute(USER,userModel);
+        String ipAddress = IPAddressHelper.getIPAddress(request);
+        DataMap.put(USER,ipAddress,userModel);
+        Map<String, String> map = RequestResultBuilder.buildResult("success");
+        String url="";
+        if (userModel.getIsAdmin()==0){
+            url="UI/home";
         }else{
-            result.put("result","failure");
-            result.put("msg","获取消息Id 失败");
+            url="UI/syshome";
         }
-        return result;
+
+        map.put("url",url);
+        return map;
     }
 
+    @ResponseBody
+    @GetMapping("/user/")
+    public UserModel getUser(HttpServletRequest request){
+        UserModel model =getUserModel(request);
+        if ("male".equals(model.getGender())){
+            model.setMale(true);
+        }else{
+            model.setMale(false);
+        }
+        log.info("user: "+model);
+        return model;
+    }
+
+    @ResponseBody
+    @PutMapping("/user/")
+    public Map<String,String> updateUserInfo(@ModelAttribute UserModel model,HttpServletRequest request){
+        UserModel user=(UserModel)request.getSession().getAttribute(USER);
+        log.info("put : user: "+user);
+        user.setEmail(model.getEmail());
+        user.setPhone(model.getPhone());
+        user.setImage(model.getImage());
+        request.getSession().setAttribute(USER,user);
+        return RequestResultBuilder.buildResult("success");
+    }
+
+    private UserModel getUserModel(HttpServletRequest request){
+        UserModel model=(UserModel) request.getSession().getAttribute(USER);
+        if (model==null){
+            String ip=IPAddressHelper.getIPAddress(request);
+            model= (UserModel) DataMap.getData(USER).get(ip);
+        }
+        return model;
+    }
 }

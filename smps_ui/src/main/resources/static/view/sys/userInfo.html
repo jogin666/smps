@@ -11,11 +11,6 @@
   <link rel="stylesheet" href="/layui/css/layui.css" media="all">
   <link rel="stylesheet" href="/layui/css/admin.css" media="all">
 </head>
-<style>
-  .hidden{
-    display: none;
-  }
-</style>
 <body>
 
   <div class="layui-fluid">
@@ -27,6 +22,13 @@
             
             <div class="layui-form" lay-filter="">
               <form name="userInfoForm" id="userInfoForm" enctype="multipart/form-data">
+                <div class="layui-form-item">
+                  <label class="layui-form-label">角色: </label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="role" v-model="user.roleName" readonly class="layui-input">
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">不可修改</div>
+                </div>
                 <div class="layui-form-item">
                   <label class="layui-form-label">账号：</label>
                   <div class="layui-input-inline">
@@ -58,14 +60,14 @@
                 <div class="layui-form-item">
                   <label class="layui-form-label">性别：</label>
                   <div class="layui-input-inline">
-                   <span v-if="user.male">
+                    <span v-if="user.male">
                       <input type="radio" name="sex" value="男" title="男" checked disabled>
                       <input type="radio" name="sex" value="女" title="女" disabled>
                     </span>
-                    <span v-if="!user.male">
-                      <input type="radio" name="sex" value="男" title="男" disabled>
-                      <input type="radio" name="sex" value="女" title="女" checked disabled>
-                    </span>
+                    <span v-else>
+                  <input type="radio" name="sex" value="男" title="男"  disabled>
+                  <input type="radio" name="sex" value="女" title="女"  checked disabled>
+                </span>
                   </div>
                   <div class="layui-form-mid layui-word-aux">不可修改</div>
                 </div>
@@ -204,7 +206,7 @@
   }
 
   function back() {
-    window.history.back(-1);
+    window.location.href="/view/sys/sys_home.html";
   }
 </script>
 </html>

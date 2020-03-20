@@ -1,131 +1,210 @@
+
+
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>个人主页_SMPS</title>
-    <link rel="stylesheet" href="/css/userInfo/global.css">
-    <link rel="stylesheet" href="/css/userInfo/global_1.css">
-    <link rel="stylesheet" href="/css/userInfo/ui.css">
-    <link rel="stylesheet" href="/css/userInfo/base.css">
-    <link rel="stylesheet" href="/css/userInfo/default.css">
-    <link rel="stylesheet" href="/css/userInfo/profilemain.css">
+  <meta charset="utf-8">
+  <title>设置我的资料</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="/layui/css/admin.css" media="all">
 </head>
+<style>
+  .hidden{
+    display: none;
+  }
+</style>
 <body>
-<div class="nk-container" id="app">
 
-    <!--显示-->
-    <div class="nowcoder-header js-nowcoder-header">
-        <div class="header-main clearfix">
-            <img src="/images/login/sspu.png">
-        </div>
-    </div>
-
-    <div class="nk-main clearfix">
-        <!--头像 div-->
-        <div class="profile-info-wrapper">
-            <div class="profile-level level1"></div>
-            <div class="profile-info-main">
-                <a class="head-pic ">
-                    <img v-bind:src="user.image">
-                </a>
-                <div class="profile-info-cont">
-                    <section>
-                        <a class="profile-user-name js-nc-title-tips level-color-6" href="javascript:void(0);" data-title="yours201906250919491" data-encode="1">{{user.account}}</a>
-                    </section>
-                    <ul class="profile-cont clearfix">
-                        <li class="profile-city"><i class="ico-pcity"></i>{{user.name}}</li>
-                        <li class="profile-edu"><i class="ico-pedu"></i>上海第二工业大学</li>
-                    </ul>
-                    <input name="account" id="account" type="hidden"  value="20161113033" v-model="user.account">
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">设置我的资料</div>
+          <div class="layui-card-body" id="userInfo" pad15 >
+            
+            <div class="layui-form" lay-filter="">
+              <form name="userInfoForm" id="userInfoForm" enctype="multipart/form-data">
+                <div class="layui-form-item">
+                  <label class="layui-form-label">账号：</label>
+                  <div class="layui-input-inline">
+                    <input type="text" id="account" name="account" v-model="user.account" readonly class="layui-input">
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">不可修改</div>
                 </div>
-            </div>
-        </div>
-        <!--右边 div-->
-        <div class="nk-bar">
-            <div class="module-box">
-                <ul class="profile-menu">
-                    <li>
-                        <a href="/UI/view/home"  class="selected" >
-                            <i class="profile-icon p-ico-home"></i>
-                            首页
-                            <i class="icon-angle-right"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/view/user/personInfo.html" target="container">
-                            <i class="profile-icon p-ico-info"></i>
-                            个人信息
-                            <i class="icon-angle-right"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/view/message/mess.html" target="container">
-                            <i class="profile-icon p-ico-project "></i>
-                            信息
-                            <i class="icon-angle-right"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/view/message/cancel.html" target="container">
-                            <i class="profile-icon p-ico-answer"></i>
-                            驳回信息
-                            <i class="icon-angle-right"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/view/message/collection.html" target="container">
-                            <i class="profile-icon p-ico-sc"></i>
-                            收藏
-                            <i class="icon-angle-right"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/view/admin/password.html" target="container" >
-                            <i class="profile-icon p-ico-test"></i>
-                            修改密码
-                            <i class="icon-angle-right"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!--显示内容div-->
-        <div class="nk-content">
-            <iframe width="100%" height="100%" src="/view/user/tip.html" frameborder="0" name="container"></iframe>
-        </div>
-
-        <!--底部-->
-        <div class="ft-wrap js-nowcoder-footer">
-            <div class="ft-cont clearfix">
-                <div class="ft-main">
+                <div class="layui-form-item">
+                  <label class="layui-form-label">用户名：</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="name"  v-model="user.name" readonly class="layui-input">
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">不可修改</div>
                 </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label">班级/部门：</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="class_dept" v-model="user.class_dept" readonly class="layui-input">
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">不可修改</div>
+                </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label">年龄：</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="age" v-model="user.age" readonly class="layui-input">
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">不可修改</div>
+                </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label">性别：</label>
+                  <div class="layui-input-inline">
+                   <span v-if="user.male">
+                      <input type="radio" name="sex" value="男" title="男" checked disabled>
+                      <input type="radio" name="sex" value="女" title="女" disabled>
+                    </span>
+                    <span v-if="!user.male">
+                      <input type="radio" name="sex" value="男" title="男" disabled>
+                      <input type="radio" name="sex" value="女" title="女" checked disabled>
+                    </span>
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">不可修改</div>
+                </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label">手机号：</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="phone" id="phone" v-model="user.phone" lay-verify="phone" autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label">邮箱：</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="email" id="email" v-model="user.email" lay-verify="email" autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label">头像：</label>
+                  <div class="layui-input-inline">
+                    <img v-bind:src="user.image" id="headImg" width="100" height="100"/>
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">
+                    <input type="file" id="userHeadImg" name="headImg" onchange="changeFile()"/>
+                  </div>
+                </div>
+              </form>
+              <div class="layui-form-item">
+                <div class="layui-input-block">
+                  <button type="button" class="layui-btn" lay-submit lay-filter="setmyinfo" onclick="submitForm()">确认修改</button>
+                  <button type="button" class="layui-btn layui-btn-primary" onclick="back()">取消</button>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+     </div>
     </div>
-</div>
+  </div>
 </body>
-<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="/layui/layui.all.js"></script>
+<script>
+  ;!function () {
+    var from=layer.form;
+  }();
+</script>
+<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
-<script type="text/javascript">
-    new Vue({
-        el:'#app',
-        data:function(){
-            return{
-                user: {
-                    "name" : "",
-                    "account": "",
-                    "image" : ""
-                }
-            }
-        },
-        mounted:function () {
-            axios.get("http://localhost:9008/UI/user/")
-                .then(response => (this.user=response.data))
-                .catch(function (reason) {
-                    console.log(reason);
-                })
-        },
+<script type="text/javascript" src='/js/jquery.min.js'></script>
+<script>
+  new Vue({
+    el:'#userInfo',
+    data:function () {
+      return{
+        user:null
+      }
+    },
+    mounted:function () {
+      axios.get('http://localhost:9008/UI/user/')
+              .then(response => (this.user = response.data))
+              .catch(function (error) { // 请求失败处理
+                console.log(error);
+              });
+    }
+  })
+
+  function changeFile() {
+    var read=new FileReader(); // 创建FileReader对像;
+    var headImgFile=document.getElementById("userHeadImg").files[0];
+    read.readAsDataURL(headImgFile)  // 调用readAsDataURL方法读取文件;
+    var userHeadImg=document.getElementById("headImg");
+    read.onload=function(e) {
+      url = this.result  // 拿到读取结果;
+      userHeadImg.src = url;
+    }
+  }
+
+  function submitForm() {
+
+    var account=$("#account").val();
+    // 创建FormData对象
+    var data = new FormData($('#userInfoForm')[0]);
+
+    // 为FormData对象添加数据
+    $.each($('#userHeadImg')[0].files, function(i, file) {
+      data.append('headImg', file);
+    });
+
+    $.ajax({
+      url:'http://127.0.0.1:8080/smps/user/'+account,
+      type:'put',
+      data:data,
+      async:false,
+      dataType:'json',
+      cache: false,
+      contentType: false,        /* 不可缺 */
+      processData: false,         /* 不可缺 */
+      success:function(backdata){
+        if (backdata!=null && backdata.result=="success"){
+          alert("信息更新成功");
+          updateUserInfo(backdata);
+        }else {
+          alert("信息失败");
+        }
+      },error:function () {
+        alert("请求失败");
+      }
+    });
+    return false;
+    // document.forms[0].action = "http://127.0.0.1:8080/smps/user/edit";
+    // document.forms[0].submit();
+    // var userInfo=$("#").serializeArray(); //序列化表单数组
+  }
+
+  function updateUserInfo(backdata) {
+    $.ajax({
+      url:'http://localhost:9008/UI/user/',
+      type:'put',
+      data:{
+        "phone":backdata.phone,
+        "email":backdata.email,
+        "image":backdata.image
+      },
+      async:false,
+      dataType:'json',
+      success:function(backdata){
+        if (backdata!=null && backdata.result=="success"){
+          alert("加载更新");
+          parent.location.reload();
+          // window.location.href="http://localhost:9008/view/admin/sysview.html";
+        }else {
+          alert("加载更新失败");
+        }
+      },error:function () {
+        alert("请求加载更新失败");
+      }
     })
+  }
+
+  function back() {
+    window.history.back(-1);
+  }
 </script>
 </html>

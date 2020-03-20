@@ -20,21 +20,21 @@
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <ul class="layui-nav layui-layout-left">
       <li class="layui-nav-item"><a href="#"></a></li>
-      <li class="layui-nav-item"><a href="/view/admin/sys_home.html" target="container">首页</a></li>
-      <li class="layui-nav-item"><a href="/view/admin/home.html">校园消息</a></li>
+      <li class="layui-nav-item"><a href="/view/sys/syshome.html" target="container">首页</a></li>
+      <li class="layui-nav-item"><a href="/view/sys/home.html">校园消息</a></li>
       <li class="layui-nav-item"><a href="">其他</a></li>
 
     </ul>
 
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
-        <a href="/view/user/userInfo.html" target="_blank">
+        <a href="/view/user/home.html" target="_blank">
           <img v-bind:src="user.image" class="layui-nav-img">
           {{user.name}}
         </a>
         <input type="hidden" id="account" v-model="user.account">
       </li>
-      <li class="layui-nav-item"><a href="/UI/user/loginOut">退出</a></li>
+      <li class="layui-nav-item"><a href="/UI/loginOut">退出</a></li>
     </ul>
 
   </div>
@@ -45,30 +45,24 @@
       <ul class="layui-nav layui-nav-tree"  lay-filter="test">
 
         <li class="layui-nav-item layui-nav-itemed">
-          <a class="" href="/view/admin/mess.html" target="container">消息审核</a>
+          <a class="" href="/UI/sys/message" target="container">消息审核</a>
         </li>
         <li class="layui-nav-item">
-          <a href="/view/admin/user.html" target="container">用户管理</a>
+          <a href="/UI/sys/user" target="container">用户管理</a>
         </li>
         <li class="layui-nav-item">
-          <a href="/view/admin/admin.html" target="container">管理员管理</a>
+          <a href="/UI/sys/admin" target="container">管理员管理</a>
         </li>
         <li class="layui-nav-item">
-          <a href="/view/admin/role.html" target="container">角色管理</a>
+          <a href="/UI/sys/role" target="container">角色管理</a>
         </li>
-        <!--<li class="layui-nav-item">-->
-            <!--<a href="/view/admin/userInfo.html" target="container">基本资料</a>-->
-        <!--</li>-->
-        <!--<li class="layui-nav-item">-->
-          <!--<a href="/view/admin/password.html" target="container">修改密码</a>-->
-        <!--</li>-->
       </ul>
     </div>
   </div>
   
   <div class="layui-body">
     <!-- 内容主体区域 -->
-    <iframe width="100%" height="100%" src="/view/admin/sys_home.html" frameborder="0" name="container"></iframe>
+    <iframe width="100%" height="100%" src="/view/sys/syshome.html" frameborder="0" name="container"></iframe>
   </div>
 
   <div class="layui-footer" style="text-align: center">
@@ -76,12 +70,6 @@
     <p>CopyRight&nbsp;&nbsp;&nbsp;©2020&nbsp;&nbsp;&nbsp;上海第二工业大学</a></p>
     <p>Create By zy</a></p>
   </div>
-    <script type="text/javascript" src="/layui/layui.all.js"></script>
-    <script>
-        ;!function () {
-            let element=layer.element;
-        }();
-    </script>
 </div>
 <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>

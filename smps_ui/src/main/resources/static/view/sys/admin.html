@@ -161,8 +161,8 @@
           layer.open({
             type: 2
             ,title: '添加管理员'
-            ,content: 'adminform.html'
-            ,area: ['620px', '420px']
+            ,content: '/view/sys/adminform.html'
+            ,area: ['600px', '600px']
             ,btn: ['确定', '取消']
             ,yes: function(index, layero){
               var iframeWindow = window['layui-layer-iframe'+ index]
@@ -248,7 +248,7 @@
           layer.open({
               type: 2,
               title: '编辑',
-              area:['50%','50%'],
+              area:['600px','600px'],
               content: 'adminedit.html', //这里content是一个普通的String
               btn: ['确定', '取消'],
               success: function (index, layero) {

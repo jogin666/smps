@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息</title>
+
+</head>
+<style>
+    .center{
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform: translate(-50%, -50%);
+    }
+    .button {
+        background-color: #008CBA; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+    }
+</style>
+<link type="text/css" href="/layui/css/layui.css">
+<body>
+ <div id="mainContent">
+     <div style="width: 900px;height: 800px; background: white" class="center">
+         <div id="template" v-html="content">{{content}}</div>
+         <div style="text-align: center;margin-top: 20px" id="btn">
+             <button class="button" id="cancelBtn" onclick="cancel()">返回</button>
+         </div>
+     </div>
+ </div>
+</body>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script type="text/javascript">
+    let vue=new Vue({
+        el:'#template',
+        data:function () {
+            return{
+               content:""
+            }
+        },
+        mounted:function () {
+            let url=window.location.href;
+            let mId=url.substring(url.lastIndexOf("/")+1);
+            axios.get("http://127.0.0.1:8080/smps/message/"+mId)
+                .then(function (response) {
+                    vue.content=response.data.message;
+                })
+                .catch(function (reason) {
+                    alert("请求获取数据失败");
+                })
+        }
+    })
+    function cancel() {
+        window.close();
+    }
+</script>
+</html>

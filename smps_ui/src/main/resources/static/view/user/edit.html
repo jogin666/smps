@@ -53,21 +53,6 @@
         data: {
             message:"123456"
         },
-        // mounted:function () {
-        //     axios.get("http://localhost:9008/UI/message")
-        //         .then(function (response) {
-        //             let data=response.data;
-        //             if (data.result!=null && data.result=="success"){
-        //                 alert("获取成功");
-        //                 vue.getContent(data.messId);
-        //             }else{
-        //                 alert("无法获取消息Id")
-        //             }
-        //         })
-        //         .catch(function (reason) {
-        //             alert("请求失败");
-        //         })
-        // },
         methods:{
             getContent:function (mId) {
                 axios.get("http://127.0.0.1:8080/smps/message/"+mId)
@@ -161,22 +146,6 @@
             }
         })
     }, false)
-
-    // function getAccount() {
-    //     var account="";
-    //     $.ajax({
-    //         async:false,
-    //         type: 'get',
-    //         dataType:'json',
-    //         url:'http://localhost:9008/UI/user/',
-    //         success:function (backdata) {
-    //             account=backdata.account;
-    //         },error:function () {
-    //         }
-    //     })
-    //     return account;
-    // }
-
 </script>
 
 <script src="/layui/layui.all.js"></script>

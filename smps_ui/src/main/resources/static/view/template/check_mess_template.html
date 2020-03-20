@@ -156,15 +156,6 @@
                         alert("请求失败");
                     })
             },
-            getContent:function (messId) {
-                axios.get("http://127.0.0.1:8080/smps/message/"+messId)
-                    .then(function (backdata) {
-                        obj.message=backdata.data.message;
-                    })
-                    .catch(function (reason) {
-                        console.log(reason);
-                    })
-            },
             addClass:function () {
                 document.getElementById("reason").disabled=true;
                 document.getElementById("authority").disabled=false;
@@ -176,18 +167,14 @@
             }
         },
         mounted:function () {
-            axios.get("http://localhost:9008/UI/message")
-                .then(function (backadata) {
-                    let data=backadata.data;
-                    if (data.result=="success"){
-                        obj.getContent(data.messId)
-                        obj.messId=data.messId;
-                    }else if (data.result=="failure") {
-                        alert(data.msg);
-                        return false;
-                    }
-                }).catch(function (reason) {
-                    console.log(reason)
+            let url=window.location.href;
+            let mId=url.substring(url.lastIndexOf("/")+1);
+            axios.get("http://127.0.0.1:8080/smps/message/"+mId)
+                .then(function (backdata) {
+                    obj.message=backdata.data.message;
+                })
+                .catch(function (reason) {
+                    console.log(reason);
                 })
         }
     })
