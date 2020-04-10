@@ -19,6 +19,16 @@ spring:
   mvc:
     view:
       suffix: .html
+  redis:
+    database: 0
+    jedis:
+      pool:   #连接池
+        max-active: 6
+        min-idle: 1
+        max-wait: -1   #无限等待
+    host: 127.0.0.1
+    port: 6379
+    password:
 
 
 mybatis:

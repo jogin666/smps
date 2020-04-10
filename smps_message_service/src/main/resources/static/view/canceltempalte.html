@@ -21,7 +21,7 @@
 </style>
 <body>
 <div style="width: 800px;height: 100%;" class="center" id="app">
-    <div style="text-align: center"><h1>消息编辑</h1></div>
+    <div style="text-align: center"><h1>校园信息编辑</h1></div>
     <hr>
     <form id="typeIdFrom">
         <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role"
@@ -40,7 +40,7 @@
     </form>
     <div style="text-align: center"><h3>温馨提示：请勿删除文中的标识符</h3></div>
     <div id="div1" class="toolbar">
-        ###content###
+        ###text###
     </div>
     <div style="text-align: center;margin-top: 20px">
         <button class="layui-btn" id="submitBtn">提交</button>
@@ -117,7 +117,7 @@
     }
 
     function cancel () {
-        window.history.back(-1);
+        window.close();
     }
 </script>
 <script src="http://127.0.0.1:9008/layui/layui.all.js"></script>

@@ -1,18 +1,19 @@
 package com.zy.smps_message_service.service.impl;
 
 import com.zy.smps_message_service.entity.*;
+import com.zy.smps_message_service.helper.RedisHelper;
 import com.zy.smps_message_service.mapper.MessageMapper;
 import com.zy.smps_message_service.page.HtmlHelper;
 import com.zy.smps_message_service.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Transactional
 @Service
@@ -21,6 +22,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private MessageMapper messageMapper;
+
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
 
     @Override
     public List<MessageEntity> findNotPublishMess(PageParam pageParam){
@@ -34,8 +38,18 @@ public class MessageServiceImpl implements MessageService {
     //查询全部信息
     @Override
     public List<MessageEntity> findAll(PageParam pageParam) {
-        List<MessageEntity> messages = messageMapper.findAll(pageParam);
-        return messages;
+        pageParam.setPage(0);
+        String key=String.valueOf(pageParam.hashCode());
+        if (redisTemplate.hasKey(key)){
+            log.info("way: {}","use redis");
+            return (List<MessageEntity>) redisTemplate.opsForSet().pop(key);
+        }else{
+            List<MessageEntity> messages = messageMapper.findAll(pageParam);
+            redisTemplate.opsForSet().add(key,messages);
+            redisTemplate.expire(key,15,TimeUnit.MINUTES);
+            RedisHelper.keySet().add(key);
+            return messages;
+        }
     }
 
     @Override
@@ -66,15 +80,18 @@ public class MessageServiceImpl implements MessageService {
     //更新状态
     @Override
     public int updateMessageState(Map<String,Object> map) {
-        if ((int)map.get("messState")==MessageEntity.MESSAGE_STATE_PUBLISH){
-            String mId=(String) map.get("mId");
-            String content=messageMapper.findOneById(mId)
-                    .getContent()
-                    .replace("--start--","")
-                    .replace("--end--","")
-                    .replace("++start++","")
-                    .replace("++end++","");
-           new Thread(()-> HtmlHelper.createHtml(mId,content));
+        String mId=(String) map.get("mId");
+        String content=messageMapper.findOneById(mId).getContent();
+        if ((int)map.get("messState")==MessageEntity.MESSAGE_STATE_PUBLISH){ //发布
+            String str=content.replace("--start--","")
+                           .replace("--end--","")
+                           .replace("++start++","")
+                            .replace("++end++","");
+            new Thread(()-> HtmlHelper.createHtml(mId,str,true)).start();
+            Collection<String> set= RedisHelper.keySet();
+            redisTemplate.delete(set);
+        }else if ((int)map.get("messState")==MessageEntity.MESSAGE_STATE_CANCEL){
+            new Thread(()->HtmlHelper.createHtml(mId,content,false)).start();
         }
         return messageMapper.updateMessageState(map);
     }
@@ -102,7 +119,7 @@ public class MessageServiceImpl implements MessageService {
             messageMapper.deleteMessageType(mId); //删除所有分类记录
             messageMapper.deleteCommentBymId(mId);
             row+=messageMapper.deleteMessage(mId);
-            HtmlHelper.deleteHtml(mId); //删除html 文件
+            HtmlHelper.deleteHtml(mId,false); //删除html 文件
         }
         return row ;
     }

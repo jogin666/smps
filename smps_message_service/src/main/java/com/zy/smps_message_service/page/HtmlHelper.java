@@ -8,10 +8,19 @@ import java.io.*;
 @Slf4j
 public class HtmlHelper {
 
-    public static void createHtml(String messId,String content){
+    public static void createHtml(String messId,String content,boolean publish){
+        String filePath="";
+        String fileName="";
         try {
-            String target_path = ResourceUtils.getURL("classpath:").getPath()+ "static/view/";
-            String filePath = target_path+"template.html";
+            String target_path=ResourceUtils.getURL("classpath:").getPath()+ "static/view/"; //路径
+            log.info("path--{}",target_path);
+            if (publish){
+                filePath = target_path+"template.html"; //模板
+                fileName =target_path+ messId + ".html"; //生成的html文件保存路径。
+            }else{
+                filePath=target_path+"canceltempalte.html";
+                fileName=target_path+messId+"cancel.html";
+            }
             // 读取模板文件
             FileInputStream fileinputstream = new FileInputStream(filePath);
             int len = fileinputstream.available();
@@ -24,7 +33,6 @@ public class HtmlHelper {
             templateContent = templateContent.replaceAll("###text###", content);
 
             //生成文件
-            String fileName =target_path+ messId + ".html"; //生成的html文件保存路径。
             FileOutputStream fileoutputstream = new FileOutputStream(fileName);// 建立文件输出流
             byte tag_bytes[] = templateContent.getBytes();
             fileoutputstream.write(tag_bytes);
@@ -35,9 +43,14 @@ public class HtmlHelper {
         }
     }
 
-    public static void deleteHtml(String messId) throws FileNotFoundException {
+    public static void deleteHtml(String messId,boolean cancel) throws FileNotFoundException {
         String target_path = ResourceUtils.getURL("classpath:").getPath()+ "static/view/";
-        String fileName=target_path+messId+".html";
+        String fileName="";
+        if (cancel){
+            fileName=target_path+messId+"cancel.html";
+        }else{
+            fileName=target_path+messId+".html";
+        }
         File file = new File(fileName);
         if (file.exists()){
             file.delete();

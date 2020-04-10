@@ -22,15 +22,9 @@ public class ViewController {
         return viewName;
     }
 
-    @GetMapping("/view/check/{messId}")
-    public String getCheckView(@PathVariable("messId")String messId, @RequestParam("account")String account){
-//        DataMap.put(account,"messId",messId);
-        return "/view/check_message";
-    }
-
     @GetMapping("/view/cancel/{mId}")
     public String getCancelView(@PathVariable("mId")String mId){
-        return "/view/cancle"+mId;
+        return "/view/"+mId+"cancel";
     }
 
 }

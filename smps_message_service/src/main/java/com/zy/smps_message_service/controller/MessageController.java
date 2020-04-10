@@ -34,13 +34,13 @@ public class MessageController {
 
     @GetMapping("/list/home") //查询全部已发布的信息
     public List<MessageEntity> findAll(@ModelAttribute PageParam pageParam){
-        List<MessageEntity> messages = messageService.findAll(pageParam);
         int size=pageParam.getLimit();
-        int end=(size!=0? size:PageParam.PAGE_NUM);
+        int start=(pageParam.getPage()-1)*size;
+        List<MessageEntity> messages = messageService.findAll(pageParam);
+        int end=(size!=0 ? size:PageParam.PAGE_NUM);
         if (end>messages.size()){
             end=messages.size();
         }
-        int start=(pageParam.getPage()-1)*size;
         for (int i=start;i<end;i++){
             MessageEntity entity=messages.get(i);
             entity.setUrl(MESSAGE_URL+entity.getMessId());
@@ -124,8 +124,13 @@ public class MessageController {
     public Map<String,String> getMessageContent(@PathVariable("messId")String messId){
         HashMap<String, String> map = new HashMap<>();
         if (!StringUtils.isEmpty(messId)){
-            MessageEntity mess = messageService.findOneById(messId);
-            map.put("message",mess.getContent());
+            MessageEntity entity = messageService.findOneById(messId);
+            String content = entity.getContent()
+                                    .replace("--start--", "")
+                                    .replace("--end--", "")
+                                    .replace("++start++", "")
+                                    .replace("++end++", "");
+            map.put("message", "　　" +content);
         }else{
             map.put("message","<h1>服务器繁忙，请稍后重试！<h1>");
         }
