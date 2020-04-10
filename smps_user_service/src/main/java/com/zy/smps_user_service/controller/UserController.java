@@ -1,6 +1,5 @@
 package com.zy.smps_user_service.controller;
 
-import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.zy.smps_user_service.entity.UserEntity;
 import com.zy.smps_user_service.model.PageParam;
@@ -55,10 +54,10 @@ public class UserController {
 
     @GetMapping("/list")  //查询全部学生（默认已有分页信息）
     public RequestResultModel<UserEntity> findAll(@ModelAttribute PageParam pageParam){
+        int start=(pageParam.getPage()-1)*pageParam.getLimit();
+        int end=start+pageParam.getLimit();
         List<UserEntity> users = userService.findUserAll(pageParam);
         if (users!=null){
-            int start=(pageParam.getPage()-1)*pageParam.getLimit();
-            int end=start+pageParam.getLimit();
             if (end>users.size()){
                 end=users.size();
             }
@@ -134,7 +133,7 @@ public class UserController {
         if(user!=null && headImg!=null){
             try {
                 //获取绝对路径
-                String path = ResourceUtils.getURL("classpath:").getPath()+"/static/upload/";
+                String path = ResourceUtils.getURL("classpath:").getPath()+"static/upload/";
                 //文件名
                 String fileName=headImg.getOriginalFilename();
                 //文件重命名

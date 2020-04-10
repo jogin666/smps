@@ -11,6 +11,8 @@ import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.GenericConversionService;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
@@ -45,5 +47,12 @@ public class SMPSUserServiceApplication {
         converters.add(new DateConvert());//日期转换器
         conversionServiceFactoryBean.setConverters(converters);
         return conversionServiceFactoryBean;
+    }
+
+    @Bean
+    public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory factory){
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(factory);
+        return redisTemplate;
     }
 }

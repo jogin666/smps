@@ -1,13 +1,14 @@
 package com.zy.smps_user_service.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user_collect_message", schema = "smps", catalog = "")
 @IdClass(UserCollectMessageEntityPK.class)
-public class UserCollectMessageEntity {
+public class UserCollectMessageEntity implements Serializable {
     private String uId;
     private String mId;
     private String account;

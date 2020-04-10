@@ -1,5 +1,8 @@
 package com.zy.smps_user_service.model;
 
+import lombok.Data;
+
+@Data
 public class PageParam {
 
     private Integer page;

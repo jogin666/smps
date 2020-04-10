@@ -4,11 +4,12 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "user", schema = "smps")
-public class UserEntity {
+public class UserEntity implements Serializable {
     private String userId;
     @ExcelProperty("account")
     private String account;

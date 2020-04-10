@@ -1,12 +1,13 @@
 package com.zy.smps_user_service.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "role", schema = "smps", catalog = "")
-public class RoleEntity {
+public class RoleEntity implements Serializable {
     private String rId;
     private String name;
     private String createBy;

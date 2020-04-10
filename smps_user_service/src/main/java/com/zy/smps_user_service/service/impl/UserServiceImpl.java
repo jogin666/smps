@@ -1,23 +1,20 @@
 package com.zy.smps_user_service.service.impl;
 
-import com.zy.smps_user_service.entity.RoleEntity;
 import com.zy.smps_user_service.entity.UserEntity;
 import com.zy.smps_user_service.model.PageParam;
 import com.zy.smps_user_service.repository.UserRepository;
 import com.zy.smps_user_service.service.UserService;
 import com.zy.smps_user_service.util.ExcelUtil;
+import com.zy.smps_user_service.util.RedisKeyHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Transactional
 @Service
@@ -26,6 +23,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
 
     private final String SUCCESS="success";
     private final String FAILURE="failure";
@@ -53,18 +52,26 @@ public class UserServiceImpl implements UserService {
     @Override  //查询全部
     public List<UserEntity> findUserAll(PageParam pageParam) {
         List<UserEntity> users;
-        String className = pageParam.getClassName();
-        String account = pageParam.getAccount();
-        if (!StringUtils.isEmpty(className)){
-            users=userRepository.findAllByClassName(className);
-        }else if (!StringUtils.isEmpty(account)){
-            users=userRepository.findUserEntityByAccountLike(account);
-        }else if (!StringUtils.isEmpty(account) && !StringUtils.isEmpty(className)){
-            users=userRepository.findAll(className,account);
-        }else{
-            users=userRepository.findAll();
+        pageParam.setPage(0);
+        String key = String.valueOf(pageParam.hashCode());
+        if (redisTemplate.hasKey(key)){
+            return (List<UserEntity>) redisTemplate.opsForSet().pop(key);
+        }else {
+            String className = pageParam.getClassName();
+            String account = pageParam.getAccount();
+            if (!StringUtils.isEmpty(className)) {
+                users = userRepository.findAllByClassName(className);
+            } else if (!StringUtils.isEmpty(account)) {
+                users = userRepository.findUserEntityByAccountLike(account);
+            } else if (!StringUtils.isEmpty(account) && !StringUtils.isEmpty(className)) {
+                users = userRepository.findAll(className, account);
+            } else {
+                users = userRepository.findAll();
+            }
+            redisTemplate.opsForSet().add(key,users);
+            RedisKeyHelper.keySet().add(key);
+            return users;
         }
-        return users;
     }
 
     @Override //更新
@@ -80,6 +87,7 @@ public class UserServiceImpl implements UserService {
     public String deleteUserByAccount(String account) {
         userRepository.deleteByAccount(account);
         userRepository.deleteByAccount(account);
+        redisTemplate.delete(RedisKeyHelper.keySet());
         return SUCCESS;
     }
 
@@ -89,6 +97,7 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteUserCollectMessageByAccount(account);
             userRepository.deleteByAccount(account);
         }
+        redisTemplate.delete(RedisKeyHelper.keySet());
         return SUCCESS;
     }
 
@@ -98,6 +107,7 @@ public class UserServiceImpl implements UserService {
         if (user.equals(userEntity)) {
             return SUCCESS;
         }
+        redisTemplate.delete(RedisKeyHelper.keySet());
         return FAILURE;
     }
 
@@ -112,6 +122,7 @@ public class UserServiceImpl implements UserService {
                 userEntity.setPassword("123456");
                 userRepository.save(userEntity);
             }
+            redisTemplate.delete(RedisKeyHelper.keySet());
             return SUCCESS;
         }
         return FAILURE;
