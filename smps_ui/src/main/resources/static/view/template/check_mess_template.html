@@ -110,8 +110,6 @@
         data:function () {
             return{
                 message:"",
-                messId:"",
-                authority:"",
             }
         },
         methods:{
@@ -137,7 +135,9 @@
                     alert("请选择发布类型")
                     return false;
                 }
-                axios.put("http://127.0.0.1:8080/smps/message/check/"+obj.messId,
+                let url=window.location.href;
+                let messId=url.substring(url.lastIndexOf('/')+1);
+                axios.put("http://127.0.0.1:8080/smps/message/check/"+messId,
                     {
                         "authority":authority,
                         "reason":reason,

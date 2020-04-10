@@ -24,7 +24,7 @@
         </div>
 
         <div class="layui-inline">
-          <label class="layui-form-label">班级</label>
+          <label class="layui-form-label">部门/班级</label>
           <div class="layui-input-block">
             <input type="text" id="class_dept" name="class_dept" placeholder="请输入" autocomplete="off" class="layui-input">
           </div>
@@ -63,7 +63,7 @@
         <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
       </script>
       <script type="text/html" id="table-useradmin-webuser">
-        <!--<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>-->
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
       </script>
     </div>
@@ -249,35 +249,8 @@
       }else if (layEvent === 'edit') { //编辑
 
         //do something
-        layer.open({
-            type: 2,
-            title: '编辑',
-            area:['50%','50%'],
-            content: 'userform', //这里content是一个普通的String
-            btn: ['确定', '取消'],
-            success: function (index, layero) {
-                let body = layer.getChildFrame("body", index);
-                let iframeWin = window[layero.find('iframe')[0]['name']];
-                // iframeWin.method();
-                body.find('.rolename').val("测试！");
-                form.render();
-            },
-            yes: function (index, layero) {
-
-                layer.close(index);
-            },
-            btn2: function (index, layero) {
-                //return false 开启该代码可禁止点击该按钮关闭
-            }
-        });
-
-
-
-        //同步更新缓存对应的值
-        obj.update({
-          username: '123'
-          , title: 'xxx'
-        });
+        let account=data.account;
+        window.location.href="/UI/user/"+account;
       }
     });
 

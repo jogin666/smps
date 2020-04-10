@@ -2,8 +2,10 @@ package com.zy.smps_ui.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class UserModel {
+public class UserModel implements Serializable {
     
     private String userId;
     private String account;
@@ -19,5 +21,5 @@ public class UserModel {
     private boolean isMale;
     private String roleName;
     private String class_dept;
-    private Boolean female;
+    private String genderStr;
 }

@@ -45,7 +45,7 @@
 
         <div class="layui-card-body">
             <div style="padding-bottom: 10px;">
-                <button class="layui-btn layuiadmin-btn-list" data-type="check">发布</button>
+                <button class="layui-btn layuiadmin-btn-list" data-type="check">审核</button>
             </div>
             <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
             <script type="text/html" id="table-content-list">
@@ -151,7 +151,6 @@
              if (layEvent === 'edit') { //审核
                  let account=$('#account', parent.document).val();
                  let messId=data.messId;
-                 // window.open("http://localhost:9008/smps/message/view/check/"+messId+"?account="+account);
                  window.open("http://localhost:9008/UI/template/check/"+messId);
             }
         });

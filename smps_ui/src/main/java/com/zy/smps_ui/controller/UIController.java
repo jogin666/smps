@@ -1,10 +1,11 @@
 package com.zy.smps_ui.controller;
 
-import com.zy.smps_ui.data.DataMap;
 import com.zy.smps_ui.util.IPAddressHelper;
 import com.zy.smps_ui.model.UserModel;
 import com.zy.smps_ui.util.RequestResultBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,9 @@ import java.util.Map;
 public class UIController {
 
     private final String USER="user";
+
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
 
     @GetMapping("/home")
     public String getHomeView(){
@@ -47,7 +51,7 @@ public class UIController {
         if (roleName.contains("管理员") || roleName.contains("消息审核员")){
             return "/view/sys/message";
         }
-        return "view/sys/tip";
+        return "/view/sys/tip";
     }
 
     @GetMapping("/sys/user")
@@ -56,7 +60,7 @@ public class UIController {
         if (roleName.contains("管理员")){
             return "/view/sys/user";
         }
-        return "view/sys/tip";
+        return "/view/sys/tip";
     }
 
     @GetMapping("/sys/role")
@@ -65,7 +69,7 @@ public class UIController {
         if (roleName.contains("管理员")){
             return "/view/sys/role";
         }
-        return "view/sys/tip";
+        return "/view/sys/tip";
     }
     
     @GetMapping("/sys/admin")
@@ -74,7 +78,7 @@ public class UIController {
         if (roleName.contains("超级管理员")){
             return "/view/sys/admin";
         }
-        return "view/sys/tip";
+        return "/view/sys/tip";
     }
 
     @GetMapping("/template/{mId}")
@@ -91,8 +95,24 @@ public class UIController {
     @GetMapping("/loginOut")
     public String getLoginView(HttpServletRequest  request){
         request.getSession().removeAttribute(USER);
-        DataMap.removeData(IPAddressHelper.getIPAddress(request));
+        redisTemplate.opsForHash().delete(USER,IPAddressHelper.getIPAddress(request));
         return "/index";
+    }
+
+    @GetMapping("/user/info")
+    public String getUserInfoView(HttpServletRequest request){
+        UserModel model = getUserModel(request);
+        if (model.getIsAdmin()==1){
+            return "/view/sys/userInfo";
+        }
+        return "/view/user/userInfo";
+    }
+
+    @GetMapping("/user/{account}")
+    public String getUserEditView(HttpServletRequest request){
+        UserModel model=getUserModel(request);
+        redisTemplate.opsForSet().add(model.getAccount(),null);
+        return "/view/sys/useredit";
     }
 
     @ResponseBody
@@ -101,7 +121,7 @@ public class UIController {
         log.info("post: user: "+userModel);
         request.getSession().setAttribute(USER,userModel);
         String ipAddress = IPAddressHelper.getIPAddress(request);
-        DataMap.put(USER,ipAddress,userModel);
+        redisTemplate.opsForHash().put(USER,ipAddress,userModel);
         Map<String, String> map = RequestResultBuilder.buildResult("success");
         String url="";
         if (userModel.getIsAdmin()==0){
@@ -118,13 +138,22 @@ public class UIController {
     @GetMapping("/user/")
     public UserModel getUser(HttpServletRequest request){
         UserModel model =getUserModel(request);
-        if ("male".equals(model.getGender())){
-            model.setMale(true);
-        }else{
-            model.setMale(false);
+        if (model==null){
+            model=getUserModel(request);
         }
-        log.info("user: "+model);
-        return model;
+        try{
+            if ("male".equals(model.getGender())){
+                model.setMale(true);
+                model.setGenderStr("男");
+            }else{
+                model.setMale(false);
+                model.setGenderStr("女");
+            }
+            log.info("user: "+model);
+            return model;
+        }catch (Exception e){
+            return null;
+        }
     }
 
     @ResponseBody
@@ -143,7 +172,7 @@ public class UIController {
         UserModel model=(UserModel) request.getSession().getAttribute(USER);
         if (model==null){
             String ip=IPAddressHelper.getIPAddress(request);
-            model= (UserModel) DataMap.getData(USER).get(ip);
+            model= (UserModel) redisTemplate.opsForHash().get(USER,ip);
         }
         return model;
     }

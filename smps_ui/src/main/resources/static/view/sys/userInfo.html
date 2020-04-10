@@ -60,14 +60,7 @@
                 <div class="layui-form-item">
                   <label class="layui-form-label">性别：</label>
                   <div class="layui-input-inline">
-                    <span v-if="user.male">
-                      <input type="radio" name="sex" value="男" title="男" checked disabled>
-                      <input type="radio" name="sex" value="女" title="女" disabled>
-                    </span>
-                    <span v-else>
-                  <input type="radio" name="sex" value="男" title="男"  disabled>
-                  <input type="radio" name="sex" value="女" title="女"  checked disabled>
-                </span>
+                    <input type="text" name="age" v-model="user.genderStr" readonly class="layui-input">
                   </div>
                   <div class="layui-form-mid layui-word-aux">不可修改</div>
                 </div>

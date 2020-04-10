@@ -12,9 +12,17 @@
         top:50%;
         transform: translate(-50%, -50%);
     }
+    .toolbar {
+        border: 1px solid #ccc;/*设置下拉棒*/
+    }
+    .w-e-text-container{
+        height: 600px !important;/*!important是重点，因为原div是行内样式设置的高度300px*/
+    }
 </style>
 <body>
 <div style="width: 800px;height: 800px;" class="center" id="app">
+    <div style="text-align: center"><h1>校园信息编辑</h1></div>
+    <hr>
     <form id="typeIdFrom">
         <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role"
              style="text-align:center;padding:20px 20px 0 0;">
@@ -32,7 +40,7 @@
     </form>
     <!--<input type="hidden" id="account" name="account" v-model="user.account">-->
     <div style="text-align: center"><h3>温馨提示：请勿删除文中的标识符</h3></div>
-    <div id="div1">
+    <div id="div1" class="toolbar">
         <h3><p style="text-align: center" id="fTitle">--start-- 这里写标题且标题的长度大于1 --end--</p></h3>
         <h4><p style="text-align: center" id="sTitle"> 这里写副标题 </p></h4>
         <p id="content">++start++ 这里写内容 ++end++</p>
