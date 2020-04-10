@@ -8,9 +8,12 @@ import com.zy.smps_password_service.service.PasswordService;
 import com.zy.smps_password_service.helper.MailHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 @Transactional
 @Service
@@ -24,12 +27,18 @@ public class PasswordServiceImpl implements PasswordService {
     private PasswordRepository userRepository;
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
 
     //手机发送验证码
     @Override
     public String sendMSM(String phone) {
-        String code = CodeHelper.createCode(phone);
+        String code = CodeHelper.createCode();
+        if (!redisTemplate.hasKey(phone)){
+            redisTemplate.opsForValue().set(phone,code);
+            redisTemplate.expire(phone,3, TimeUnit.MINUTES);
+        }
         SMSHelper.sendSMS(phone,code);
         return SUCCESS;
     }
@@ -37,7 +46,12 @@ public class PasswordServiceImpl implements PasswordService {
     //邮件发送验证码
     @Override
     public String sendVerifyNumber(String email) {
-        mailSender.send(MailHelper.builderMailMessage(email));
+        String code=CodeHelper.createCode();
+        if (redisTemplate.hasKey(email)) {
+            redisTemplate.opsForValue().set(email, code);
+            redisTemplate.expire(email, 3, TimeUnit.MINUTES);
+        }
+        mailSender.send(MailHelper.builderMailMessage(email,code));
         return SUCCESS;
     }
 
@@ -53,7 +67,7 @@ public class PasswordServiceImpl implements PasswordService {
     //验证码是否正确
     @Override
     public boolean checkVerifyNumber(String receiver,String number) {
-        String code = CodeHelper.find(receiver);
+        String code = redisTemplate.opsForValue().get(receiver);
         if (number.equals(code)){
             return true;
         }

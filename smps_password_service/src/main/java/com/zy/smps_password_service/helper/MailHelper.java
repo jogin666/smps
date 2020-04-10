@@ -16,21 +16,20 @@ public class MailHelper {
     private static String tail; //尾部
 
     //构建邮件
-    public static SimpleMailMessage builderMailMessage(String to){
+    public static SimpleMailMessage builderMailMessage(String to,String code){
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(from);
         mailMessage.setTo(to);
         mailMessage.setSubject(title);
-        mailMessage.setText(buildMessage(to));
+        mailMessage.setText(buildMessage(code));
         mailMessage.setSentDate(new Date());
         return mailMessage;
     }
 
     //构建邮件主题内容
-    private static String buildMessage(String to){
+    private static String buildMessage(String code){
         StringBuffer sb=new StringBuffer();
         sb.append(message+" ");
-        String code= CodeHelper.createCode(to);
         sb.append(code);
         sb.append(" ,"+tail);
         return sb.toString();
