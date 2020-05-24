@@ -24,5 +24,5 @@ public interface AdminService {
     //批量删除
     int deleteAllByAccount(List<String> accounts);
     //跟新
-    int update(AdminEntity adminEntity,List<String> roleIds,String creator);
+    int update(AdminEntity adminEntity,String creator);
 }

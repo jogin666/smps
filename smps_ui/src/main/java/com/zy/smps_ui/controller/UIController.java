@@ -109,10 +109,18 @@ public class UIController {
     }
 
     @GetMapping("/user/{account}")
-    public String getUserEditView(HttpServletRequest request){
-        UserModel model=getUserModel(request);
-        redisTemplate.opsForSet().add(model.getAccount(),null);
+    public String getUserEditView(@PathVariable("account")String account){
         return "/view/sys/useredit";
+    }
+
+    @GetMapping("/admin/{account}")
+    public String getAdminView(@PathVariable("account")String account){
+        return "/view/sys/adminedit";
+    }
+
+    @GetMapping("/role/{roleId}")
+    public String getRoleView(@PathVariable("roleId")String roleId){
+        return "/view/sys/roleedit";
     }
 
     @ResponseBody

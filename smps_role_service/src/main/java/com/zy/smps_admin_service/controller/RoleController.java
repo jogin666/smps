@@ -96,9 +96,9 @@ public class RoleController {
     @PutMapping("/{roleId}") //更新 一个 role
     public Map<String,String> updateRole(@PathVariable("roleId")String roleId,
                              @ModelAttribute RoleEntity roleEntity,
-                             @RequestParam("privilegeIds")String[] privilegeIds){
+                             @RequestParam("privilegeIds")List<String> privilegeIds){
         roleEntity.setRoleId(roleId);
-        return getResult(roleService.update(roleEntity,Arrays.asList(privilegeIds)));
+        return getResult(roleService.update(roleEntity,privilegeIds));
     }
 
     @DeleteMapping("/{roleId}") //删除一个 role

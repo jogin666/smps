@@ -24,6 +24,7 @@ public class UserEntity implements Serializable {
     @ExcelProperty("gender")
     private String gender;
     private String image;
+    @ExcelProperty("email")
     private String email;
     @ExcelProperty("state")
     private int state;

@@ -82,7 +82,9 @@ public class AdminController {
 
     @GetMapping("/{account}")
     public AdminEntity findAdminById(@PathVariable("account") String account){
-        return adminService.findAdminById(account);
+        AdminEntity entity = adminService.findAdminById(account);
+        entity.setRoleEntity(null);
+        return entity;
     }
 
     @PostMapping("/")
@@ -90,6 +92,12 @@ public class AdminController {
                          @RequestParam("roleId")String roleId, @RequestParam("adminAccount")String adminAccount){
         adminEntity.setPassword("123456");
         adminEntity.setIsAdmin(1);
+        AdminEntity admin = adminService.findAdminById(adminAccount);
+        if (admin!=null){
+            Map<String, String> map = RequestHelper.buildRequestMap(FAILURE);
+            map.put("msg","账号已存在，添加失败！");
+            return map;
+        }
         int row=adminService.save(adminEntity,roleId,adminAccount);
         return getResult(row);
     }
@@ -105,13 +113,12 @@ public class AdminController {
         return getResult(adminService.deleteAllByAccount(Arrays.asList(adminIds)));
     }
 
-    @PutMapping("/{account}")
-    public  Map<String,String> updateAdmin(@PathVariable("account")String account,@ModelAttribute AdminEntity adminEntity,
-                              @RequestParam("roleIds")List<String> roleIds, HttpServletRequest request){
-        AdminEntity admin= (AdminEntity) request.getSession().getAttribute("user");
-        String creator = admin.getAccount();
-        adminEntity.setAccount(account);
-        int row=adminService.update(adminEntity,roleIds,creator);
+    @PutMapping("/{account}/{creator}")
+    public  Map<String,String> updateAdmin(@PathVariable("account")String account,@ModelAttribute("model") AdminEntity adminEntity,
+                                           @PathVariable("creator")String creator){
+        String uId = adminService.findAdminById(account).getUId();
+        adminEntity.setUId(uId);
+        int row=adminService.update(adminEntity,creator);
         return getResult(row);
     }
 

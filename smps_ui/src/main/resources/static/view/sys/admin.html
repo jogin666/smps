@@ -15,6 +15,7 @@
     <div class="layui-card">
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
         <div class="layui-form-item">
+          <div><h2>管理员管理</h2></div><hr>
           <div class="layui-inline">
             <label class="layui-form-label">账号</label>
             <div class="layui-input-block">
@@ -59,10 +60,10 @@
 
         <script type="text/html" id="table-useradmin-admin">
           {{#  if(d.roleName == '超级管理员'){ }}
-            <!--<a class="layui-btn layui-btn-disabled layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>-->
+            <a class="layui-btn layui-btn-disabled layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
             <a class="layui-btn layui-btn-disabled layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
           {{#  } else { }}
-            <!--<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>-->
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
           {{#  } }}
         </script>
@@ -81,7 +82,7 @@
 
       table.render({
         elem: '#LAY-user-back-manage',
-        height: 312,
+        height: 480,
         url: 'http://127.0.0.1:8080/smps/admin/list', //数据接口
         method:'get',
         page: true, //开启分页
@@ -113,7 +114,8 @@
          table.reload('LAY-user-back-manage', {
           where:{
              name: condition.adminname,
-             account:condition.account
+             account:condition.account,
+             page:1
            }
         });
       });
@@ -171,13 +173,8 @@
               //监听提交
               iframeWindow.layui.form.on('submit(LAY-user-front-submit)', function(data){
                 var admin= data.field; //获取提交的字段
-
-                if (admin.gender==undefined || admin.gender=="") {
-                  layer.msg("请选择性别")
-                }else if (admin.adminId==undefined || admin.adminId=="") {
+                if (admin.adminId==undefined || admin.adminId=="") {
                     layer.msg("请选择角色")
-                }else if (admin.state==undefined || admin.state.length==0){
-                  layer.msg("请选择状态")
                 }else {
                   let adminAccount=$('#account', parent.document).val();
                   $.ajax({
@@ -200,11 +197,15 @@
                         layer.msg("保存成功");
                         table.reload('LAY-user-back-manage');
                         layer.close(index); //关闭弹层
-                      }else{
-                        layer.msg("保存失败");
+                      }if (data.msg!=undefined && data.msg!=null) {
+                        layer.msg(data.msg);
                       }
-                    },error:function () {
-                      layer.msg("请求失败");
+                    },error:function (data) {
+                      if (data.msg!=undefined && data.msg!=null) {
+                        layer.msg(data.msg);
+                      }else{
+                        layer.msg("请求失败");
+                      }
                     }
                   })
                 }
@@ -243,35 +244,8 @@
 
           });
         } else if (layEvent === 'edit') { //编辑
-
-          //do something
-          layer.open({
-              type: 2,
-              title: '编辑',
-              area:['600px','600px'],
-              content: 'adminedit.html', //这里content是一个普通的String
-              btn: ['确定', '取消'],
-              success: function (index, layero) {
-                  let body = layer.getChildFrame("body", index);
-                  let iframeWin = window[layero.find('iframe')[0]['name']];
-                  // iframeWin.method();
-                  body.find('.rolename').val("测试！");
-                  form.render();
-              },
-              yes: function (index, layero) {
-
-                  layer.close(index);
-              },
-              btn2: function (index, layero) {
-                  //return false 开启该代码可禁止点击该按钮关闭
-              }
-          });
-
-          //同步更新缓存对应的值
-          obj.update({
-            username: '123'
-            , title: 'xxx'
-          });
+          let account=data.adminId;
+            window.location.href="/UI/admin/"+account;
         }
       });
 

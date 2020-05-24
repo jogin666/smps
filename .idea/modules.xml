@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/smps_message_service/smps_message_service.iml" filepath="$PROJECT_DIR$/smps_message_service/smps_message_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smps_password_service/smps_password_service.iml" filepath="$PROJECT_DIR$/smps_password_service/smps_password_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smps_role_service/smps_role_service.iml" filepath="$PROJECT_DIR$/smps_role_service/smps_role_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smps_server1/smps_server1.iml" filepath="$PROJECT_DIR$/smps_server1/smps_server1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smps_server2/smps_server2.iml" filepath="$PROJECT_DIR$/smps_server2/smps_server2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smps_server3/smps_server3.iml" filepath="$PROJECT_DIR$/smps_server3/smps_server3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smps_ui/smps_ui.iml" filepath="$PROJECT_DIR$/smps_ui/smps_ui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smps_user_service/smps_user_service.iml" filepath="$PROJECT_DIR$/smps_user_service/smps_user_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smps_zuul/smps_zuul.iml" filepath="$PROJECT_DIR$/smps_zuul/smps_zuul.iml" />
+    </modules>
+  </component>
+</project>

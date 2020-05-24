@@ -11,10 +11,11 @@
 </head>
 <body>
 
-<div class="layui-fluid">
-    <div class="layui-card">
+<div class="layui-fluid" style="height: 600px">
+    <div class="layui-card" style="height: 600px">
         <div class="layui-form layui-card-header layuiadmin-card-header-auto">
             <div class="layui-form-item">
+                <div><h3>驳回信息管理</h3></div><hr>
                 <div class="layui-inline">
                     <label class="layui-form-label">类别：</label>
                     <div class="layui-input-inline">
@@ -40,7 +41,7 @@
             <div style="padding-bottom: 10px;">
                 <button class="layui-btn layuiadmin-btn-list" data-type="del">删除</button>
             </div>
-            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
+            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list" ></table>
             <script type="text/html" id="table-content-list">
                 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
             </script>
@@ -58,7 +59,7 @@
 
         table.render({
             elem: '#LAY-app-content-list',
-            height: 312,
+            height: 480,
             url: 'http://127.0.0.1:8080/smps/message/list/cancel/'+account, //数据接口
             method:'get',
             page: true, //开启分页
@@ -113,23 +114,25 @@
                             messIds=messIds+",";
                         }
                     }
-                    layer.msg(messIds);
                     $.ajax({
-                        url : "http://127.0.0.1:8080/smps/message/",
+                        url : "http://127.0.0.1:8080/smps/message/"+messIds,
                         type : "delete",
                         dataType : "json",
-                        data:{
-                            'messIds':messIds
-                        },
                         success : function(backdata) {
                             if (backdata.result!=null && backdata.result=="success"){
                                 table.reload('LAY-app-content-list');
                                 layer.msg('删除成功');
+                            }else if (backdata.msg!=null &&backdata.code!=0 ) {
+                                layer.msg(backdata.msg);
                             }else{
                                 layer.msg("删除失败");
                             }
-                        }, error : function(data) {
-                            layer.msg("请求失败");
+                        }, error : function(backdata) {
+                            if (backdata.msg!=null &&backdata.code!=0 ) {
+                                layer.msg(backdata.msg);
+                            }else{
+                                layer.msg("请求失败");
+                            }
                         }
                     });
                 });

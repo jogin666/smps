@@ -69,9 +69,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override //更新
-    public int update(AdminEntity adminEntity,List<String> roleIds,String creator) {
+    public int update(AdminEntity adminEntity,String creator) {
         adminMapper.deleteAdminAndRole(adminEntity.getAccount()); //删除拥有的角色
-//        saveAdminAndRole(adminEntity,roleId,creator);
+        saveAdminAndRole(adminEntity,adminEntity.getAdminId(),creator);
         return adminMapper.update(adminEntity);
     }
 

@@ -81,11 +81,18 @@
                     </div><!--end: forFlow -->
                 </template>
             </div>
-            <ul class="pager">
-                <li class="next">
-                    <a onclick="nextPage()">下一页 &rarr;</a>
-                </li>
-            </ul>
+            <!--<ul class="pager">-->
+                <!--<li class="next">-->
+                    <!--<a onclick="nextPage()">下一页 &rarr;</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+            <div id="homepage_bottom_pager" class="topicListFooter">
+
+
+                <div class="pager" id="pager">
+                </div>
+            </div>
+
         </div>
 
         <!--侧边栏-->
@@ -152,31 +159,68 @@
 <script type="text/javascript">
 
     var page=1;
-
     let obj=new Vue({
         el:"#mainContent",
         data:function () {
             return{
-                messageList:null
+                messageList:null,
+                count:0
             }
         },
         mounted:function () {
-            axios.get("http://127.0.0.1:8080/smps/message/list/home")
-                .then(response => (this.messageList=response.data))
+            axios.get("http://127.0.0.1:8080/smps/message/list/home?page=1")
+                .then(function (reponse) {
+                   if (reponse.data.msg!="success"){
+                       alert(reponse.data.msg);
+                   } else{
+                       obj.messageList=reponse.data.result;
+                       obj.count=reponse.data.count;
+                       obj.paging();
+                   }
+                })
                 .catch(function (reason) {
                     console.log(reason);
                 })
+        },
+        methods:{
+            paging:function () {
+                let pager=document.getElementById("pager");
+                let pageCount=obj.count/10;
+                let mod=obj.count%10;
+                if (mod==0){
+
+                }else{
+                    pageCount++;
+                }
+
+                let innerHtml="";
+                for (let i=1;i<=pageCount;i++){
+                    if (i==page) {
+                        innerHtml=innerHtml+"<a><"+i+"></a>";
+                    }else{
+                        innerHtml=innerHtml+"<a onclick=\"obj.jumpPage("+i+")\">"+i+"</a>";
+                    }
+                }
+                pager.innerHTML=innerHtml;
+            },
+            jumpPage:function (pageNumber) {
+                page=pageNumber;
+                axios.get("http://127.0.0.1:8080/smps/message/list/home?page="+page)
+                    .then(function (reponse) {
+                        if (reponse.data.msg!="success"){
+                            alert(reponse.data.msg);
+                        } else{
+                            obj.messageList=reponse.data.result;
+                            obj.count=reponse.data.count;
+                            obj.paging();
+                        }
+                    })
+                    .catch(function (reason) {
+                        console.log(reason);
+                    })
+            }
         }
     })
-
-    function nextPage() {
-        page=page+1;
-        axios.get("http://127.0.0.1:8080/smps/message/list/home?page="+page)
-            .then(response => (obj.messageList=response.data))
-            .catch(function (reason) {
-                console.log(reason);
-            })
-    }
 
     new Vue({
         el:'#userInfo',
@@ -192,14 +236,22 @@
             getMessageByCondition:function() {
                 let typeId=document.getElementById("typeId").value;
                 let title=document.getElementById("title").value;
-                page=0; //重新置0
-                axios.get("http://127.0.0.1:8080/smps/message/list/home",{
+                page=1; //重新置0
+                axios.get("http://127.0.0.1:8080/smps/message/list/home?page=1",{
                     params:{
                         typeId:typeId,
                         title:title
                     }
                 })
-                    .then(response => (obj.messageList=response.data))
+                    .then(function (reponse) {
+                        if (reponse.data.msg!="success"){
+                            alert(reponse.data.msg);
+                        } else{
+                            obj.messageList=reponse.data.result;
+                            obj.count=reponse.data.count;
+                            obj.paging();
+                        }
+                    })
                     .catch(function (error) {
                         alert(error);
                     })

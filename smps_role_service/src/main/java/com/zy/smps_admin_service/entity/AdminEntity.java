@@ -15,8 +15,10 @@ public class AdminEntity implements Serializable {
     private String gender;
     private String image;
     private String email;
+    private String className;
     private int state;
     private int isAdmin;
+    private String adminId;
     private RoleEntity roleEntity;
     private Timestamp createTime;
 
@@ -122,5 +124,21 @@ public class AdminEntity implements Serializable {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public String getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(String adminId) {
+        this.adminId = adminId;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

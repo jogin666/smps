@@ -14,6 +14,7 @@
 <div class="layui-fluid">
     <div class="layui-card">
         <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div><h3>收藏管理</h3></div><hr>
             <div class="layui-form-item">
                 <div class="layui-inline">
                     <label class="layui-form-label">类别：</label>
@@ -58,7 +59,7 @@
 
         table.render({
             elem: '#LAY-app-content-list',
-            height: 312,
+            height: 480,
             url: 'http://127.0.0.1:8080/smps/message/list/collect/'+account, //数据接口
             method:'get',
             page: true, //开启分页
@@ -113,7 +114,6 @@
                             messIds=messIds+",";
                         }
                     }
-                    layer.msg(messIds);
                     $.ajax({
                         url : "http://127.0.0.1:8080/smps/message/list/collect/"+messIds,
                         type : "delete",
@@ -122,11 +122,17 @@
                             if (backdata.result!=null && backdata.result=="success"){
                                 table.reload('LAY-app-content-list');
                                 layer.msg('删除成功');
+                            }else if (backdata.msg!=null &&backdata.code!=0 ) {
+                                layer.msg(backdata.msg);
                             }else{
                                 layer.msg("删除失败");
                             }
-                        }, error : function(data) {
-                            layer.msg("请求失败");
+                        }, error : function(backdata) {
+                            if (backdata.msg!=null &&backdata.code!=0 ) {
+                                layer.msg(backdata.msg);
+                            }else{
+                                layer.msg("请求失败");
+                            }
                         }
                     });
                 });

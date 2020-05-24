@@ -78,6 +78,7 @@ public class UserServiceImpl implements UserService {
     public String updateUserInfo(UserEntity userEntity) {
         UserEntity user = userRepository.save(userEntity);
         if (user.equals(userEntity)) {
+            redisTemplate.delete(RedisKeyHelper.keySet());
             return SUCCESS;
         }
         return FAILURE;

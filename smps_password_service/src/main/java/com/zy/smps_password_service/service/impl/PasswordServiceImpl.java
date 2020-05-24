@@ -35,10 +35,9 @@ public class PasswordServiceImpl implements PasswordService {
     @Override
     public String sendMSM(String phone) {
         String code = CodeHelper.createCode();
-        if (!redisTemplate.hasKey(phone)){
-            redisTemplate.opsForValue().set(phone,code);
-            redisTemplate.expire(phone,3, TimeUnit.MINUTES);
-        }
+        log.info("code->{}",code);
+        redisTemplate.opsForValue().set(phone,code);
+        redisTemplate.expire(phone,3, TimeUnit.MINUTES);
         SMSHelper.sendSMS(phone,code);
         return SUCCESS;
     }
@@ -47,10 +46,9 @@ public class PasswordServiceImpl implements PasswordService {
     @Override
     public String sendVerifyNumber(String email) {
         String code=CodeHelper.createCode();
-        if (redisTemplate.hasKey(email)) {
-            redisTemplate.opsForValue().set(email, code);
-            redisTemplate.expire(email, 3, TimeUnit.MINUTES);
-        }
+        log.info("code->{}",code);
+        redisTemplate.opsForValue().set(email, code);
+        redisTemplate.expire(email, 3, TimeUnit.MINUTES);
         mailSender.send(MailHelper.builderMailMessage(email,code));
         return SUCCESS;
     }
@@ -68,6 +66,7 @@ public class PasswordServiceImpl implements PasswordService {
     @Override
     public boolean checkVerifyNumber(String receiver,String number) {
         String code = redisTemplate.opsForValue().get(receiver);
+        log.info("code->{}",code);
         if (number.equals(code)){
             return true;
         }

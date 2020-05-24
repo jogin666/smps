@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>消息</title>
+    <title>信息</title>
 
 </head>
 <style>
@@ -67,23 +67,51 @@
             submitCollect:function () {
                 let url = window.location.href;
                 let messId=url.substring((url.lastIndexOf("/")+1));
-                alert(messId);
-                axios.post("http://127.0.0.1:8080/smps/message/collection/",
-                    {
-                        "userId":vue.user.userId,
-                        "account":vue.user.account,
-                        "messId":messId
-                    }
-                ).then(function (backdata) {
-                    let data=backdata.data;
-                    if (data.result!=null && data.result=="success"){
-                        alert("收藏成功,请勿重复提交");
-                    } else{
-                        alert("收藏失败")
-                    }
-                }).catch(function (reson) {
-                    alert("请求失败");
-                })
+                let btnValue=document.getElementById("submitBtn").innerText
+                if ("收藏"==btnValue){
+                    axios.post("http://127.0.0.1:8080/smps/message/collection/",
+                        {
+                            "userId":vue.user.userId,
+                            "account":vue.user.account,
+                            "messId":messId
+                        }
+                    ).then(function (backdata) {
+                        let data=backdata.data;
+                        if (data.result!=null && data.result=="success"){
+                            alert("收藏成功,请勿重复提交");
+                            document.getElementById("submitBtn").innerHTML="取消收藏";
+                        } else if (data.msg!=undefined) {
+                            alert(data.msg)
+                        }else{
+                            alert("收藏失败");
+                        }
+                    }).catch(function (data) {
+                        if (data.msg!=undefined) {
+                            alert(data.msg)
+                        }else{
+                            alert("请求失败");
+                        }
+                    })
+                }else{
+                    axios.delete("http://127.0.0.1:8080/smps/message//list/collect/"+messId)
+                        .then(function (backdata) {
+                            let data=backdata.data;
+                            if (data.result!=null && data.result=="success"){
+                                alert("取消收藏成功");
+                                document.getElementById("submitBtn").innerHTML="收藏";
+                            } else if (data.msg!=undefined) {
+                                alert(data.msg)
+                            }else{
+                                alert("取消收藏失败");
+                            }
+                        }).catch(function (data) {
+                        if (data.msg!=undefined) {
+                            alert(data.msg)
+                        }else{
+                            alert("请求失败");
+                        }
+                    })
+                }
             }
         },
         mounted:function () {

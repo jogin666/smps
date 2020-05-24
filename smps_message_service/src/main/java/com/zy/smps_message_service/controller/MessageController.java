@@ -33,14 +33,26 @@ public class MessageController {
     }
 
     @GetMapping("/list/home") //查询全部已发布的信息
-    public List<MessageEntity> findAll(@ModelAttribute PageParam pageParam){
+    public RequestResultModel<MessageEntity> findAll(@ModelAttribute PageParam pageParam){
         int size=pageParam.getLimit();
+        size=(size==0? PageParam.PAGE_NUM :size);
+        log.info("page->{}",pageParam.getPage());
         int start=(pageParam.getPage()-1)*size;
         List<MessageEntity> messages = messageService.findAll(pageParam);
         int end=(size!=0 ? size:PageParam.PAGE_NUM);
-        if (end>messages.size()){
-            end=messages.size();
+        int count=messages.size();
+        log.info("count->{}",count);
+        if (end>count){
+            end=count;
         }
+        if (start>end){
+            start=(size/10)*size-1;
+            end=count-1;
+        } else if (start>0){
+            start--;
+        }
+        log.info("start->{}",start);
+        log.info("end->{}",end);
         for (int i=start;i<end;i++){
             MessageEntity entity=messages.get(i);
             entity.setUrl(MESSAGE_URL+entity.getMessId());
@@ -48,7 +60,7 @@ public class MessageController {
             String publishTime = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
             entity.setTimeStr(publishTime);
         }
-        return messages;
+        return new RequestResultModel<>(count,SUCCESS,0,messages.subList(start,end));
     }
 
     @GetMapping("/list/{account}") //查询用户已发布的消息
@@ -65,12 +77,17 @@ public class MessageController {
                                                                  PageParam pageParam){
         pageParam.setAccount(account);
         List<MessageEntity> messages = messageService.findCanceledMessage(pageParam);
+        if (!StringUtils.isEmpty(pageParam.getTypeId())){
+            pageParam.setPage(1);
+        }
         try{
             int start=(pageParam.getPage()-1)*pageParam.getLimit();
             int end=start+pageParam.getLimit();
             if (end>messages.size()){
                 end=messages.size();
             }
+            log.info("size->{}",messages.size());
+            log.info("end->{}",end);
             for (int i=start;i<end;i++){
                 MessageEntity entity = messages.get(i);
                 List<MessageTypeEntity> types = entity.getTypes();
@@ -95,6 +112,9 @@ public class MessageController {
                                                                        @ModelAttribute PageParam pageParam){
         pageParam.setAccount(account);
         List<CollectMessageEntity> userCollectMess = messageService.findUserCollectMess(pageParam);
+        if (!StringUtils.isEmpty(pageParam.getTypeId())){
+            pageParam.setPage(1);
+        }
         try {
             int start=(pageParam.getPage()-1)*pageParam.getLimit();
             int end=start+pageParam.getLimit();
@@ -117,6 +137,7 @@ public class MessageController {
             }
             return new RequestResultModel<>(userCollectMess.size(),"success",0,userCollectMess.subList(start,end));
         }catch (Exception e){
+            e.printStackTrace();
             return new RequestResultModel<>(-1,"获取数据失败",-1,null);
         }
     }
@@ -247,7 +268,13 @@ public class MessageController {
     }
 
     private RequestResultModel<MessageEntity> handleResult(PageParam pageParam,List<MessageEntity> messages){
+        if (!StringUtils.isEmpty(pageParam.getTypeId())
+                ||!StringUtils.isEmpty(pageParam.getState()) || !StringUtils.isEmpty(pageParam.getTitle())){
+            pageParam.setPage(1);
+            log.info("执行page->1");
+        }
         try{
+            log.info("page->{}",pageParam.getPage());
             int start=(pageParam.getPage()-1)*pageParam.getLimit();
             int end=start+pageParam.getLimit();
             if (end>messages.size()){
@@ -277,7 +304,7 @@ public class MessageController {
                 messageEntity.setTimeStr(str);
                 entities.add(messageEntity);
             }
-            return new RequestResultModel<>(messages.size(),"success",0,messages.subList(start,messages.size()));
+            return new RequestResultModel<>(messages.size(),"success",0,messages.subList(start,end));
         }catch (Exception e){
             return new RequestResultModel<>(-1,"获取数据失败",-1,null);
         }

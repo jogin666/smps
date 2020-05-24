@@ -1,0 +1,16 @@
+@charset "utf-8";
+.hide{
+    display:none !important;
+}
+
+.error-box #loginYzmError{
+    color:white !important;
+}
+
+.error-box #loginUserError{
+    color:white !important;
+}
+
+.error-box #loginPwdError{
+    color:white !important;
+}

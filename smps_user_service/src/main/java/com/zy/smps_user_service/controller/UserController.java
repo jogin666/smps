@@ -89,6 +89,17 @@ public class UserController {
         return map;
     }
 
+    @PutMapping("list/{account}")
+    public Map<String,String> updateUserInfo(@PathVariable("account")String account,@ModelAttribute UserEntity userEntity){
+        UserEntity user = userService.findUserByAccount(account);
+        userEntity.setImage(user.getImage());
+        userEntity.setUserId(user.getUserId());
+        userEntity.setPassword(user.getPassword());
+        userEntity.setIsAdmin(user.getIsAdmin());
+        String result=userService.updateUserInfo(userEntity);
+        return RequestResultBuilder.buildResult(result);
+    }
+
     @DeleteMapping("/delete/{account}") //删除单个用户
     public Map<String,String> deleteUserByAccount(@PathVariable("account")String account){
          String result=userService.deleteUserByAccount(account);
@@ -111,6 +122,12 @@ public class UserController {
         userEntity.setPassword("123456");
         userEntity.setState(1);
         userEntity.setIsAdmin(0);
+        UserEntity user = userService.findUserByAccount(userEntity.getAccount());
+        if (user!=null){
+            Map<String, String> map = RequestResultBuilder.buildResult(FAILURE);
+            map.put("msg","账号已存在,添加失败！");
+            return map;
+        }
         String result=userService.save(userEntity);
         return RequestResultBuilder.buildResult(result);
     }

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="smps_message_service" />
+        <module name="smps_password_service" />
+        <module name="smps_role_service" />
+        <module name="smps_server1" />
+        <module name="smps_server2" />
+        <module name="smps_server3" />
+        <module name="smps_ui" />
+        <module name="smps_user_service" />
+        <module name="smps_zuul" />
+        <module name="spms_server1" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="com.zy.smps_ui" target="1.8" />
+      <module name="demo" target="1.8" />
+      <module name="smps_common" target="1.8" />
+      <module name="smps_consumer" target="1.8" />
+      <module name="smps_message_service" target="1.8" />
+      <module name="smps_password_service" target="1.8" />
+      <module name="smps_role_service" target="1.8" />
+      <module name="smps_server1" target="1.8" />
+      <module name="smps_server2" target="1.8" />
+      <module name="smps_server3" target="1.8" />
+      <module name="smps_ui" target="1.8" />
+      <module name="smps_user_service" target="1.8" />
+      <module name="smps_zuul" target="1.8" />
+      <module name="spms_message_service" target="1.8" />
+      <module name="spms_password_service" target="1.8" />
+      <module name="spms_server1" target="1.8" />
+      <module name="spms_server2" target="1.8" />
+      <module name="spms_user_service" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="com.zy.smps_ui" options="-parameters" />
+      <module name="demo" options="-parameters" />
+      <module name="smps_common" options="-parameters" />
+      <module name="smps_consumer" options="-parameters" />
+      <module name="smps_message_service" options="-parameters" />
+      <module name="smps_password_service" options="-parameters" />
+      <module name="smps_role_service" options="-parameters" />
+      <module name="smps_server1" options="-parameters" />
+      <module name="smps_server2" options="-parameters" />
+      <module name="smps_server3" options="-parameters" />
+      <module name="smps_ui" options="-parameters" />
+      <module name="smps_user_service" options="-parameters" />
+      <module name="smps_zuul" options="-parameters" />
+      <module name="spms_message_service" options="-parameters" />
+      <module name="spms_password_service" options="-parameters" />
+      <module name="spms_server1" options="-parameters" />
+      <module name="spms_server2" options="-parameters" />
+      <module name="spms_user_service" options="-parameters" />
+    </option>
+  </component>
+</project>

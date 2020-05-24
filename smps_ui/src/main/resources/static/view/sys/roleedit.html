@@ -11,40 +11,142 @@
 <body>
 
 <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 30px 0 0;">
-    <form class="layui-form" action="" style="padding: 20px;" lay-filter="editRoleForm">
-        <div class="layui-form-item">
+    <form class="layui-form" action="" style="padding: 20px;" lay-filter="editRoleForm" id="roleInfoForm">
+        <div class="layui-form-item" id="role">
             <label class="layui-form-label">角色名称：</label>
-            <div class="layui-input-block">
-                <input type="text" id="rolename" disabled="" required="required" value="" autocomplete="off" class="layui-input" />
+            <div class="layui-input-block" style="width: 190px">
+                <input type="text" name="roleName" id="rolename" lay-verify="required" value="" autocomplete="off" class="layui-input" />
             </div>
         </div>
+        <hr>
         <div class="layui-form-item">
             <label class="layui-form-label">角色权限：</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="privileges[]" lay-skin="primary" title="管理员管理">
-                <input type="checkbox" name="privileges[]" lay-skin="primary" title="消息审核">
-                <input type="checkbox" name="privileges[]" lay-skin="primary" title="角色管理">
-                <input type="checkbox" name="privileges[]" lay-skin="primary" title="用户管理">
+                <input type="checkbox" name="privilegeIds" lay-skin="primary" value="p00001" title="管理员管理">
+                <input type="checkbox" name="privilegeIds" lay-skin="primary" value="p00002" title="消息审核">
+                <input type="checkbox" name="privilegeIds" lay-skin="primary" value="p00003" title="角色管理">
+                <input type="checkbox" name="privilegeIds" lay-skin="primary" value="p00004" title="用户管理">
             </div>
         </div>
+        <hr>
         <div class="layui-form-item">
             <label class="layui-form-label">状态：</label>
             <div class="layui-input-block">
-                <input type="radio" name="gender" value="1" title="有效" checked>
-                <input type="radio" name="gender" value="0" title="无效">
+                <input type="radio" name="state" value="1" title="有效" checked>
+                <input type="radio" name="state" value="0" title="无效">
             </div>
         </div>
-        <div class="layui-form-item layui-hide">
-            <button class="layui-btn" lay-submit lay-filter="LAY-user-role-submit" id="LAY-user-role-submit">提交</button>
+        <hr>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit lay-filter="setmyinfo">确认修改</button>
+                <button type="button" class="layui-btn layui-btn-primary" onclick="back()">取消</button>
+            </div>
         </div>
     </form>
 </div>
 
 <script src="/layui/layui.all.js"></script>
 <script>
-    ;!function () {
-        var $ = layui.$
-            ,form = layui.form ;
+    var layer,$;
+    ;!function(){
+        let form = layui.form;
+        layer=layui.layer;
+        $=layer.$;
+        form.on('submit(setmyinfo)',function (data) {
+            submitForm();
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        })
+    }();
+</script>
+<script type="text/javascript" src='/js/jquery.min.js'></script>
+<script type="text/javascript" src="/webjars/vue/2.6.11/vue.js"></script>
+<script>
+
+    $(document).ready(function(){
+        let url=window.location.href;
+        let roleName=url.substring(url.lastIndexOf('?')+1);
+        roleName=getCharFromUtf8(roleName);
+        $('#rolename').val(roleName);
+    });
+
+    function submitForm() {
+        if (!checkData()){
+            return;
+        }
+        // 创建FormData对象
+        let data = new FormData($('#roleInfoForm')[0]);
+        let url=window.location.href;
+        let privileges=$('#privilegeIds').val();
+        let roleId=url.substring(url.lastIndexOf('/')+1,url.lastIndexOf('?'));
+        $.ajax({
+            url:'http://127.0.0.1:8080/smps/role/'+roleId,
+            type:'put',
+            data:data,
+            async:false,
+            dataType:'json',
+            contentType: false,        /* 不可缺 */
+            processData: false,         /* 不可缺 */
+            success:function(backdata){
+                if (backdata!=null && backdata.result=="success"){
+                    alert("角色信息更新成功");
+                }else if (backdata.msg!=null && backdata.code!=1) {
+                    alert(backdata.msg)
+                }else{
+                    alert("角色信息更新失败");
+                }
+            },error:function (backdata) {
+                if (backdata.msg!=null && backdata.code!=1) {
+                    alert(backdata.msg)
+                }else {
+                    alert("请求失败");
+                }
+            }
+        });
+        return false;
+    }
+
+    function checkData() {
+
+        let t=$("input[type='checkbox']").is(':checked');
+        if (!t){
+            layer.msg("请选择权限");
+            return false;
+        }
+        return true;
+    }
+
+    function getCharFromUtf8(str) {
+        var cstr = "";
+        var nOffset = 0;
+        if (str == "")
+            return "";
+        str = str.toLowerCase();
+        nOffset = str.indexOf("%e");
+        if (nOffset == -1)
+            return str;
+        while (nOffset != -1) {
+            cstr += str.substr(0, nOffset);
+            str = str.substr(nOffset, str.length - nOffset);
+            if (str == "" || str.length < 9)
+                return cstr;
+            cstr += utf8ToChar(str.substr(0, 9));
+            str = str.substr(9, str.length - 9);
+            nOffset = str.indexOf("%e");
+        }
+        return cstr + str;
+    }
+
+    function utf8ToChar(str){
+        var iCode, iCode1, iCode2;
+        iCode = parseInt("0x" + str.substr(1, 2));
+        iCode1 = parseInt("0x" + str.substr(4, 2));
+        iCode2 = parseInt("0x" + str.substr(7, 2));
+        return String.fromCharCode(((iCode & 0x0F) << 12) | ((iCode1 & 0x3F) << 6) | (iCode2 & 0x3F));
+    }
+
+    function back() {
+        window.history.back(-1);
     }
 </script>
 </body>

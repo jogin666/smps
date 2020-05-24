@@ -14,6 +14,7 @@
 <div class="layui-fluid">
     <div class="layui-card">
         <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div><h3>校园信息管理</h3></div><hr>
             <div class="layui-form-item">
                 <div class="layui-inline">
                     <label class="layui-form-label">类别：</label>
@@ -68,7 +69,7 @@
         let account=$('#account', parent.document).val();
         table.render({
             elem: '#LAY-app-content-list',
-            height: 312,
+            height: 480,
             url: 'http://127.0.0.1:8080/smps/message/list/'+account, //数据接口
             method:'get',
             page: true, //开启分页
@@ -123,7 +124,6 @@
                             messIds=messIds+",";
                         }
                     }
-                    layer.msg(messIds);
                     $.ajax({
                         url : "http://127.0.0.1:8080/smps/message/"+messIds,
                         type : "delete",
@@ -131,12 +131,18 @@
                         success : function(backdata) {
                             if (backdata.result!=null && backdata.result=="success"){
                                 table.reload('LAY-app-content-list');
-                                layer.msg('发布成功');
+                                layer.msg('删除信息成功');
+                            }else if (backdata.msg!=null &&backdata.code!=0 ) {
+                               layer.msg(backdata.msg);
                             }else{
-                                layer.msg("发布失败");
+                                layer.msg("删除信息失败");
                             }
-                        }, error : function(data) {
-                            layer.msg("请求失败");
+                        }, error : function(backdata) {
+                            if (backdata.msg!=null &&backdata.code!=0 ) {
+                                layer.msg(backdata.msg);
+                            }else{
+                                layer.msg("删除信息失败");
+                            }
                         }
                     });
                 });

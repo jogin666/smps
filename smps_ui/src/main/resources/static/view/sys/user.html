@@ -16,6 +16,7 @@
     <div class="layui-form layui-card-header layuiadmin-card-header-auto">
 
       <div class="layui-form-item">
+        <div><h2>用户管理</h2></div><hr>
         <div class="layui-inline">
           <label class="layui-form-label">账号</label>
           <div class="layui-input-block">
@@ -78,10 +79,11 @@
     var form = layui.form;
     var table = layui.table;
     var upload=layui.upload;
+    var layer=layui.layer;
 
     table.render({
       elem: '#LAY-user-manage',
-      height: 312,
+      height: 480,
       url: 'http://127.0.0.1:8080/smps/user/list', //数据接口
       method:'get',
       page: true, //开启分页
@@ -114,7 +116,8 @@
       table.reload('LAY-user-manage', {
         where: {
           account:conditions.account,
-          className:conditions.class_dept
+          className:conditions.class_dept,
+          page:1
         }
       });
     });
@@ -182,11 +185,15 @@
                     layer.msg("添加成功");
                     table.reload('LAY-user-manage'); //数据刷新
                     layer.close(index); //关闭弹层
-                  }else{
-                    layer.msg("保存失败");
+                  }else if (backdata.msg!=undefined && backdata.msg!=null) {
+                    layer.msg(backdata.msg);
                   }
-                },error:function () {
-                  layer.msg("请求失败");
+                },error:function (backdata) {
+                  if (backdata.msg!=undefined && backdata.msg!=null) {
+                    layer.msg(backdata.msg);
+                  }else{
+                    layer.msg("请求失败");
+                  }
                 }
               })
             });
@@ -247,8 +254,6 @@
           //向服务端发送删除指令
         });
       }else if (layEvent === 'edit') { //编辑
-
-        //do something
         let account=data.account;
         window.location.href="/UI/user/"+account;
       }

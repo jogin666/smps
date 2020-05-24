@@ -35,7 +35,10 @@
     </insert>
 
     <update id="update" parameterType="AdminEntity">
-        update user set state=#{state},is_admin=#{isAdmin}
+        update user set account=#{account},age=#{age},gender=#{gender},
+              user_name=#{name},phone=#{phone},email=#{email},state=#{state}
+              where u_id=#{uId}
+
     </update>
 
     <delete id="delete" parameterType="string">
@@ -74,6 +77,7 @@
         <result property="email" column="email" javaType="String" jdbcType="VARCHAR"/>
         <result property="state" column="state" javaType="Integer" jdbcType="INTEGER"/>
         <result property="isAdmin" column="is_admin" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="className" column="class_name" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="admin_role" type="AdminEntity" extends="AdminMap">

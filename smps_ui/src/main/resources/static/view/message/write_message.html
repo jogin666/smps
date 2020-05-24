@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>SMPS 写消息</title>
+    <title>SMPS 写信息</title>
 </head>
 <link rel="stylesheet" href="/layui/css/layui.css" media="all">
 <style type="text/css">
@@ -27,7 +27,7 @@
         <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role"
              style="text-align:center;padding:20px 20px 0 0;">
             <div class="layui-form-item">
-                <label class="layui-form-label">消息类型：</label>
+                <label class="layui-form-label">信息类型：</label>
                 <div class="layui-input-block">
                     <input type="checkbox" name="typeId" lay-skin="primary" value="t00003" title="新闻">
                     <input type="checkbox" name="typeId" lay-skin="primary" value="t00002" title="通知">
@@ -104,7 +104,8 @@
             url:'http://127.0.0.1:8080/smps/message/',
             success:function (backdata) {
                 if (backdata.result!=null && backdata.result=="success"){
-                    alert("提交成功，请勿重复提交");
+                    alert("提交成功，即将返回上一页");
+                    window.history.back(-1);
                 } else if (backdata.msg!=null && backdata.msg!="") {
                     alert(backdata.msg);
                 }else {

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$/demo" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_message_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_password_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_role_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_server1" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_server2" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_server3" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_ui" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_user_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/smps_zuul" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

@@ -101,7 +101,6 @@
                     if (backdata!=null && backdata.result!="success"){
                         showError("账号或密码错误");
                     }else if (backdata!=null && backdata.result=="success"){
-                        alert("请求成功");
                         sendUserInfo(backdata);
                     }
                 },error:function () {
@@ -128,7 +127,6 @@
             "roleName":userEntity.roleName,
             "class_dept":userEntity.className
         },function (resultMap) {
-            alert(resultMap.result);
             var url="http://localhost:9008/"+resultMap.url;
             window.location.href=url;
         },'json')

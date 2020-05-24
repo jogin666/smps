@@ -1,0 +1,368 @@
+@charset "utf-8";
+* {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    font-family: "微软雅黑";
+    box-sizing:border-box;
+}
+a {
+    color: #333;
+    text-decoration: none;
+}
+.clear {
+    clear: both;
+}
+img {
+    border: none;
+}
+body {
+    min-width: 1280px;
+}
+
+html,body{ height:100%;}
+
+.header {
+    width: 100%;
+    height: auto;
+    border-top: 3px #2291ef solid;
+    height: 13%;
+    padding: 0px 10%;
+    position:relative;
+
+}
+.header .logo{    position: absolute;
+    left: 10%;
+    height: 100%; }
+
+.header img{    margin-top: -33px;
+    position: absolute;
+    top: 50%;}
+.footer {
+    width: 100%;
+    height: 140px;
+}
+.footer{ height:27%;}
+.footer-top {
+    width: 100%;
+    height: 80%;
+    padding-top: 15px;
+}
+.footer-top-box {
+    width: 830px;
+    height:100%;
+    margin: 0 auto;
+}
+.login-service {
+    width: 660px;
+    height: 40px;
+    line-height:40px;
+    float: left;
+    background:#f4f5f5;
+}
+
+.login-service a{ color:#666; padding:0px 30px;}
+
+.clearfix ul {
+    width: 660px;
+    height: 40px;
+    background:#f4f5f5;
+}
+.title li {
+    width: 111.5px;
+    text-align: center;
+    font-size: 15px;
+    float: left;
+    cursor: pointer;
+    height: 40px;
+    line-height: 40px;
+    color: #666;
+}
+.title li.cur {
+    color: #fff;
+    width: 111.5px;
+    border: none;
+    border-top: 1px solid #FFF;
+    border-left: 1px solid #FFF;
+    border-right: 1px solid #FFF;
+    background: #2291ef;
+
+}
+.titleexp li {
+    float: left;
+    font-size:16px;
+    margin-right: 10px;
+    color:#666;
+}
+.zong {
+    width: 660px;
+    height: 75px;
+    overflow: hidden;
+    padding: 5px 15px;
+    border:1px #ddd solid;
+    border-top:0px;
+}
+.tabcon-title {
+    width: 25%;
+    height: 25px;
+    line-height: 25px;
+    float: left;
+    font-size: 12px;
+    color: #666;
+    display: inline-block;
+    vertical-align: middle
+}
+.list {
+    width: 5000px;
+}
+.list .tabCon {
+    float: left;
+    width: 740px;
+    height: 40px;
+    padding-top:15px;
+}
+.login-addr {
+    width: 170px;
+    height: 100px;
+    float: left;
+    margin-left: 120px;
+}
+.login-addr-title {
+    width: 100%;
+    height: 40px;
+    line-height: 35px;
+    color: #FFF;
+    font-size: 15px;
+}
+.login-addr-bag {
+    width: 100%;
+    height: 22px;
+    margin-bottom: 4px;
+}
+.login-addr-pic {
+    width: 26px;
+    height: 26px;
+    float: left;
+}
+.login-addr-content {
+    height: 26px;
+    line-height: 26px;
+    float: left;
+    font-size: 12px;
+    color: #FFF;
+    margin-left: 5px;
+}
+.login-addr-ewm {
+    width: 85px;
+    height: 85px;
+    float: right;
+}
+.login-weixin {
+    float: left;
+    width: 90px;
+    margin-right:75px;
+    text-align: center
+}
+
+
+.footer {
+    width: 100%;
+    overflow: hidden;
+    position: fixed;
+}
+
+.footer-bottom {
+    width: 100%;
+    height: 10%;
+    font-size: 12px;
+    color: #FFF;
+    background: #3a3939;
+    clear: both;
+    text-align:center;
+    position: fixed;
+    bottom:0px;
+}
+.footer-bottom span{
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    margin-left: -137px;
+    top: 50%;
+    margin-top: -8px;}
+
+/* 登录 */
+.login-bag {
+    width: 360px;
+    height: 356px;
+    padding: 35px;
+    background:#fff;
+    position: absolute;
+    right: 40%;
+    z-index: 999;
+
+    top: 50%;
+    margin-top: -178px;
+
+}
+
+.login-bag-title {
+    width: 310px;
+    height: 30px;
+    line-height: 30px;
+    color: #333;
+    margin-bottom:30px;
+}
+.login-username {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+    border:none;
+    background:url(../../images/login/user-icon.png) no-repeat 95%  center;
+    border-bottom: 1px solid #ededed;
+    outline: none;
+}
+
+.login-password {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+    background:url(../../images/login/pw-icon.png) no-repeat 95%  center;
+    border:none;
+    border-bottom: 1px solid #ededed;
+    outline: none;
+    margin-top: 15px;
+}
+
+.login-yzm-box {
+    width: 100%;
+    height: 40px;
+    margin-top: 15px;
+    border:none;
+}
+.login-yzm-box-img {
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    float: left;
+}
+.login-yzm {
+    width: 150px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 5px;
+    padding: 0 10px;
+    outline: none;
+    border:none;
+    border-bottom: 1px solid #ededed;
+    float: right;
+}
+.login-submit-box {
+    width: 100%;
+    height: 40px;
+    margin-top: 15px;
+}
+.login-submit-box span {
+    float: left;
+    width: 40%;
+    height: 40px;
+    line-height: 40px;
+    color: #ff0000;
+    font-size: 14px;
+}
+.submit_button {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    border: none;
+    outline: none;
+    background: #2291ef;
+    color: #FFF;
+}
+.login-submit-box-forget {
+    width: 100%;
+    float: right;
+    height: 40px;
+    line-height: 40px;
+    text-align: right;
+}
+.login-submit-box-forget a {
+    font-size: 14px;
+    color: #666;
+    text-decoration: none;
+    margin-left: 15px;
+}
+.slides {
+    width: 100%;
+    height: 60%;
+    position: relative;
+    overflow: hidden;
+}
+.slideInner {
+    height: 100%;
+    position: relative;
+    left: 0;
+    margin-left: 0;
+}
+.slideInner div {
+    display: block;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    position: relative;
+    text-align: center;
+    z-index: 1;
+}
+.nav {
+    width: 100%;
+    position: relative;
+    display: none;
+}
+.nav a {
+    display: block;
+    width: 41px;
+    height: 119px;
+    opacity: .2;
+    z-index: 9;
+}
+.nav a.prev {
+    position: absolute;
+    left: 0;
+    top: -350px;
+    margin-top: -58px;
+    /*background: url(../pic/ban_pre.png) no-repeat;*/
+}
+.nav a.next {
+    position: absolute;
+    right: 0;
+    top: -350px;
+    margin-top: -58px;
+    /*background: url(../pic/ban_next.png) no-repeat;*/
+}
+.navListBox {
+    position: absolute;
+    left: 50%;
+    top: 675px;
+    z-index: 99;
+}
+#form1 .input-box {
+    position: relative;
+}
+#form1 .error-box {
+    background: rgba(0,0,0,0.5);
+    position: absolute;
+    z-index: 10000;
+    border-radius: 5px;
+    padding: 0px 10px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #fff;
+    top: 37%;
+}
+#form1 .error-box span {
+    display: inline-block;
+    color: #FF0000;
+    font-size: 14px;
+}
